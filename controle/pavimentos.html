@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link para a biblioteca de ícones Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Pavimentos</title>
     <style>
         th {
@@ -21,8 +23,12 @@
 <div class="container mt-5">
     <h2>Pavimentos da Obra</h2>
     <div class="mb-3">
-        <button class="btn btn-primary" onclick="toggleModal('modalPavimento')">Adicionar Pavimento</button>
-        <a href="index.html" class="btn btn-secondary">Voltar</a>
+        <button class="btn btn-primary" onclick="toggleModal('modalPavimento')">
+            <i class="fas fa-plus"></i>
+        </button>        
+        <a href="controle.html" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+        </a>        
     </div>
     <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar...">
     <table class="table table-striped">
@@ -57,7 +63,10 @@
                         <label for="dataPavimento">Data</label>
                         <input type="date" id="dataPavimento" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Adicionar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                    </button>
+                    
                 </form>
             </div>
         </div>
@@ -84,7 +93,9 @@
                         <label for="editDataPavimento">Data</label>
                         <input type="date" id="editDataPavimento" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                    </button>                    
                 </form>
             </div>
         </div>
@@ -119,8 +130,13 @@
                 <td>${pavimento.nome}</td>
                 <td>${formattedDate}</td>
                 <td>
-                    <button class="btn btn-info btn-sm" onclick="editPavimento(${obraIndex}, ${index})">Editar</button>
-                    <button class="btn btn-danger btn-sm" onclick="deletePavimento(${obraIndex}, ${index})">Excluir</button>
+                    <button class="btn btn-info btn-sm" onclick="editPavimento(${obraIndex}, ${index})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+
+                    <button class="btn btn-danger btn-sm" onclick="deletePavimento(${obraIndex}, ${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             `;
             tabelaPavimentos.appendChild(row);

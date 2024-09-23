@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuários</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f7f9fc;
+        }
+        h2 {
+            color: #333;
+        }
+        .modal-content {
+            animation: slideIn 0.4s;
+        }
+        @keyframes slideIn {
+            from {transform: translateY(-20%); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+        th {
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        td {
+            white-space: nowrap;
+        }
+        .icon-container {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center">Cadastro de Usuários</h2>
+
+    <!-- Ícones para adicionar novo usuário e voltar à página principal -->
+    <div class="icon-container">
+        <a href="#" class="btn btn-primary" onclick="toggleModal('modalCadastro')" title="Adicionar Usuário">
+            <i class="fa-solid fa-user-plus"></i>
+        </a>
+        <a href="controle.html" class="btn btn-secondary" title="Voltar à Página Principal">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </div>
+    
+    <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por nome...">
+
+    <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th onclick="sortTable(0)">Nome</th>
+                <th onclick="sortTable(1)">E-mail</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaUsuarios">
+            <!-- Dados cadastrados serão exibidos aqui -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de Cadastro -->
+<div id="modalCadastro" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cadastrar Usuário</h5>
+                <button type="button" class="btn-close" onclick="toggleModal('modalCadastro')"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formUsuario">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="senha" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="senha" required>
+                    </div>
+                    <input type="hidden" id="usuarioIndex" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                
+              <button type="button" class="btn btn-primary" onclick="salvarUsuario()" title="Salvar Usuário">
+                <i class="fas fa-save"></i>
+              </button>            
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let usuarioEditandoIndex = -1;
+
+    function toggleModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = modal.style.display === "none" || modal.style.display === "" ? "block" : "none";
+        if (modal.style.display === "none") {
+            resetForm();
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('formUsuario').reset();
+        document.getElementById('usuarioIndex').value = '';
+        usuarioEditandoIndex = -1;
+        document.querySelector('.modal-title').textContent = "Cadastrar Usuário";
+    }
+
+    function salvarUsuario() {
+        const nome = document.getElementById('nome').value;
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+
+        if (nome && email && senha) {
+            const tabela = document.getElementById('tabelaUsuarios');
+            if (usuarioEditandoIndex > -1) {
+                const linha = tabela.rows[usuarioEditandoIndex];
+                linha.cells[0].innerText = nome;
+                linha.cells[1].innerText = email;
+            } else {
+                const novaLinha = tabela.insertRow();
+                novaLinha.innerHTML = `
+                    <td>${nome}</td>
+                    <td>${email}</td>
+                    <td>
+                        <a href="#" class="text-warning" onclick="editarUsuario(this)">
+                            <i class="fas fa-edit" title="Editar Usuário"></i>
+                        </a>
+                        <a href="#" class="text-danger" onclick="removerUsuario(this)">
+                            <i class="fas fa-trash-alt" title="Remover Usuário"></i>
+                        </a>
+                    </td>
+                `;
+            }
+            toggleModal('modalCadastro');
+            resetForm();
+        }
+    }
+
+    function editarUsuario(element) {
+        const linha = element.parentElement.parentElement;
+        const nome = linha.cells[0].innerText;
+        const email = linha.cells[1].innerText;
+
+        document.getElementById('nome').value = nome;
+        document.getElementById('email').value = email;
+        document.getElementById('usuarioIndex').value = Array.from(linha.parentNode.children).indexOf(linha);
+        usuarioEditandoIndex = Array.from(linha.parentNode.children).indexOf(linha);
+        document.querySelector('.modal-title').textContent = "Editar Usuário";
+
+        toggleModal('modalCadastro');
+    }
+
+    function removerUsuario(element) {
+        const linha = element.parentElement.parentElement;
+        if (confirm("Você tem certeza que deseja remover este usuário?")) {
+            linha.remove();
+        }
+    }
+</script>
+</body>
+</html>

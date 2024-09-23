@@ -1,0 +1,30 @@
+CREATE TABLE obras (
+insert_sys int AUTO_INCREMENT PRIMARY KEY,
+data_insert DATETIME DEFAULT CURRENT_TIMESTAMP ,
+projetista varchar(200), 
+nome_obra varchar(200) ,
+endereco varchar(200) ,
+torre char(50) ,
+data_concreto char(50) ,
+pavimento_ativo char(50) ,
+pilar char(50) ,
+cor_pilar char(50), 
+grade char(50) ,
+cor_grade char(50), 
+viga char(50) ,
+cor_viga char(50) ,
+garfo char(50) ,
+cor_garfo char(50) ,
+laje char(50) ,
+cor_laje char(50))
+;
+INSERT INTO obras (projetista, nome_obra, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje) 
+VALUES ('Nome do Projetista', 'Nome da Obra', 'Endereço da Obra', 'Nome da Torre', 'Data do Concreto', 'Pavimento Ativo', 'Pilar', 'Cor do Pilar', 'Grade', 'Cor da Grade', 'Viga', 'Cor da Viga', 'Garfo', 'Cor do Garfo', 'Laje', 'Cor da Laje');
+
+DELETE FROM obras;
+SELECT * FROM obras_lajes.pavimentos;
+SELECT * FROM obras;
+SELECT * FROM pavimentos;
+UPDATE obras
+SET data_insert = 'novo_valor_data_insert',projetista = 'novo_valor_projetista',nome_obra = 'novo_valor_nome_obra',endereco = 'novo_valor_endereco',torre = 'novo_valor_torre',data_concreto = 'novo_valor_data_concreto',pavimento_ativo = 'novo_valor_pavimento_ativo',pilar = 'novo_valor_pilar',cor_pilar = 'novo_valor_cor_pilar',grade = 'novo_valor_grade',cor_grade = 'novo_valor_cor_grade',viga = 'novo_valor_viga',cor_viga = 'novo_valor_cor_viga',garfo = 'novo_valor_garfo',cor_garfo = 'novo_valor_cor_garfo',laje = 'novo_valor_laje',cor_laje = 'novo_valor_cor_laje'
+WHERE nome_obra = '';

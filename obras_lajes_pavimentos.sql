@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: obras_lajes
 -- ------------------------------------------------------
--- Server version	8.0.37
+-- Server version	8.0.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,7 +29,7 @@ CREATE TABLE `pavimentos` (
   `nome_pavimento` varchar(50) DEFAULT NULL,
   `data_prev` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`insert_sys`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,6 +38,7 @@ CREATE TABLE `pavimentos` (
 
 LOCK TABLES `pavimentos` WRITE;
 /*!40000 ALTER TABLE `pavimentos` DISABLE KEYS */;
+INSERT INTO `pavimentos` VALUES (1,'2024-09-23 11:13:47','65','62','2005-08-20'),(2,'2024-09-23 11:14:57','94','59','2005-09-22'),(3,'2024-09-23 11:18:53','obra1','2','2005-05-20'),(4,'2024-09-23 11:22:49','595','59','2004-12-09'),(5,'2024-09-23 12:34:11','teste1','AMARGO','2005-08-15'),(6,'2024-09-23 14:10:10','teste1','opavimentos24','2025-12-15'),(7,'2024-09-23 14:29:29','teste2','teste2','2005-12-15'),(8,'2024-09-23 15:25:21',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `pavimentos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -50,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-23  0:53:09
+-- Dump completed on 2024-09-23 16:08:46
