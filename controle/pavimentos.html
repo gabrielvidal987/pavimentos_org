@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Pavimentos</title>
+    <style>
+        th {
+            cursor: pointer;
+            white-space: nowrap; /* Evita a quebra de linha nos títulos da tabela */
+        }
+        td {
+            white-space: nowrap; /* Evita a quebra de linha no conteúdo da tabela */
+        }
+ 
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Pavimentos da Obra</h2>
+    <div class="mb-3">
+        <button class="btn btn-primary" onclick="toggleModal('modalPavimento')">Adicionar Pavimento</button>
+        <a href="index.html" class="btn btn-secondary">Voltar</a>
+    </div>
+    <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar...">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Nome</th>
+                <th onclick="sortTable(1)">Data</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaPavimentos"></tbody>
+    </table>
+</div>
+
+<!-- Modal para Adicionar Pavimento -->
+<div id="modalPavimento" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Pavimento</h5>
+                <button type="button" class="close" onclick="toggleModal('modalPavimento')">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="pavimentoForm">
+                    <div class="form-group">
+                        <label for="nomePavimento">Nome do Pavimento</label>
+                        <input type="text" id="nomePavimento" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataPavimento">Data</label>
+                        <input type="date" id="dataPavimento" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Adicionar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Pavimento -->
+<div id="modalEditPavimento" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Pavimento</h5>
+                <button type="button" class="close" onclick="toggleModal('modalEditPavimento')">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editPavimentoForm">
+                    <div class="form-group">
+                        <label for="editNomePavimento">Nome do Pavimento</label>
+                        <input type="text" id="editNomePavimento" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDataPavimento">Data</label>
+                        <input type="date" id="editDataPavimento" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const obraIndex = urlParams.get('index');
+    let obras = JSON.parse(localStorage.getItem('obras')) || [];
+    const tabelaPavimentos = document.getElementById('tabelaPavimentos');
+
+    function formatDateBR(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    function parseDateBR(dateString) {
+        const parts = dateString.split('/');
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+
+    function displayPavimentos() {
+        const pavimentos = obras[obraIndex].pavimentos;
+        tabelaPavimentos.innerHTML = '';
+        pavimentos.forEach((pavimento, index) => {
+            const formattedDate = formatDateBR(new Date(pavimento.data));
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${pavimento.nome}</td>
+                <td>${formattedDate}</td>
+                <td>
+                    <button class="btn btn-info btn-sm" onclick="editPavimento(${obraIndex}, ${index})">Editar</button>
+                    <button class="btn btn-danger btn-sm" onclick="deletePavimento(${obraIndex}, ${index})">Excluir</button>
+                </td>
+            `;
+            tabelaPavimentos.appendChild(row);
+        });
+    }
+
+    document.getElementById('pavimentoForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const pavimento = {
+            nome: document.getElementById('nomePavimento').value,
+            data: document.getElementById('dataPavimento').value
+        };
+        obras[obraIndex].pavimentos.push(pavimento);
+        localStorage.setItem('obras', JSON.stringify(obras));
+        this.reset();
+        toggleModal('modalPavimento');
+        displayPavimentos();
+    });
+
+    function toggleModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function editPavimento(obraIndex, pavimentoIndex) {
+        const pavimento = obras[obraIndex].pavimentos[pavimentoIndex];
+        document.getElementById('editNomePavimento').value = pavimento.nome;
+        document.getElementById('editDataPavimento').value = pavimento.data;
+        document.getElementById('modalEditPavimento').setAttribute('data-obra-index', obraIndex);
+        document.getElementById('modalEditPavimento').setAttribute('data-pavimento-index', pavimentoIndex);
+        toggleModal('modalEditPavimento');
+    }
+
+    document.getElementById('editPavimentoForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const obraIndex = document.getElementById('modalEditPavimento').getAttribute('data-obra-index');
+        const pavimentoIndex = document.getElementById('modalEditPavimento').getAttribute('data-pavimento-index');
+        obras[obraIndex].pavimentos[pavimentoIndex].nome = document.getElementById('editNomePavimento').value;
+        obras[obraIndex].pavimentos[pavimentoIndex].data = document.getElementById('editDataPavimento').value;
+        localStorage.setItem('obras', JSON.stringify(obras));
+        toggleModal('modalEditPavimento');
+        displayPavimentos();
+    });
+
+    function deletePavimento(obraIndex, pavimentoIndex) {
+        obras[obraIndex].pavimentos.splice(pavimentoIndex, 1);
+        localStorage.setItem('obras', JSON.stringify(obras));
+        displayPavimentos();
+    }
+
+    document.getElementById('filterInput').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = tabelaPavimentos.getElementsByTagName('tr');
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                    found = true;
+                    break;
+                }
+            }
+            rows[i].style.display = found ? '' : 'none';
+        }
+    });
+
+    // Função de ordenação para colunas
+    let sortDirection = {}; // Armazena a direção de classificação para cada coluna
+    function sortTable(colIndex) {
+        const rows = Array.from(tabelaPavimentos.rows);
+        const isAscending = sortDirection[colIndex] === 'asc'; // Verifica a direção de classificação atual
+        const isDateColumn = (colIndex === 1); // Verifica se é a coluna de datas
+
+        rows.sort((a, b) => {
+            let aText = a.cells[colIndex].innerText.trim();
+            let bText = b.cells[colIndex].innerText.trim();
+
+            if (isDateColumn) {
+                aText = parseDateBR(aText);
+                bText = parseDateBR(bText);
+                return isAscending ? aText - bText : bText - aText;
+            } else {
+                return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            }
+        });
+
+        sortDirection[colIndex] = isAscending ? 'desc' : 'asc';
+
+        rows.forEach(row => tabelaPavimentos.appendChild(row));
+    }
+
+    displayPavimentos();
+</script>
+
+</body>
+</html>

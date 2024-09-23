@@ -1,0 +1,13 @@
+ajustar redimensionado
+ajustar tabelas no bd
+salvar cores no bd também
+salvar fotos no bd
+fotos será um botão na linha da obra na planilha
+gerar forma de exportar para xlms
+na tabela sempre deve deixar visivel a ultima feita
+todos os campos são alfanumericos
+adicionar conclusão de obra
+checkbox de obra concluida nos dados da obra (em editar será possivel concluir a obra)
+na criação da obra já é criada uma laje/pavimento
+
+login deixa para depois
