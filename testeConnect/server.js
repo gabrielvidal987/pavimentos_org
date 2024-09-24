@@ -25,9 +25,9 @@ app.use(cors());
 // Habilitar o middleware para parsing do corpo das requisições
 app.use(express.json()); // Mover essa linha para cima
 
-// Endpoint para obter os dados
+// Endpoint para obter os dados de todas as obras
 app.get('/api/dados', (req, res) => {
-    db.query('SELECT * FROM obras', (err, results) => {
+    db.query('SELECT o.insert_sys, o.data_insert, o.projetista, o.nome_obra, o.endereco, o.torre, p.data_prev AS data_concreto, p.nome_pavimento AS pavimento_ativo, o.pilar, o.cor_pilar, o.grade, o.cor_grade, o.viga, o.cor_viga, o.garfo, o.cor_garfo, o.laje, o.cor_laje FROM obras o LEFT JOIN pavimentos p ON o.nome_obra = p.obra AND p.ativo = 1;', (err, results) => {
         if (err) throw err;
         res.json(results);
     });
@@ -61,7 +61,7 @@ app.post('/api/dados', (req, res) => {
             return res.status(500).json({ error: 'Erro ao inserir dados na tabela de obras' });
         }
         // Segundo INSERT na tabela pavimentos
-        const sqlPavimentos = 'INSERT INTO pavimentos (obra, nome_pavimento, data_prev) VALUES (?, ?, ?)';
+        const sqlPavimentos = 'INSERT INTO pavimentos (obra, nome_pavimento, data_prev,ativo) VALUES (?, ?, ?,1)';
         const valuesPavimentos = [nome_obra, pavimento_ativo, data_concreto];
         db.query(sqlPavimentos, valuesPavimentos, (err) => {
             if (err) {
@@ -77,10 +77,10 @@ app.post('/api/dados', (req, res) => {
 // Endpoint para atualizar dados usando nome_obra como identificador
 app.put('/api/dados/:nome_obra', (req, res) => {
     const { nome_obra } = req.params;
-    const { projetista, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje } = req.body;
+    const { projetista, nome_obra_novo, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje } = req.body;
     console.log('Atualizando obra:', nome_obra);  // Para verificar o nome_obra recebido
-    const sqlUpdate = `UPDATE obras SET projetista = ?, endereco = ?, torre = ?, data_concreto = ?, pavimento_ativo = ?, pilar = ?, cor_pilar = ?, grade = ?, cor_grade = ?, viga = ?, cor_viga = ?, garfo = ?, cor_garfo = ?, laje = ?, cor_laje = ? WHERE nome_obra = ?`;
-    const valuesUpdate = [projetista, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje, nome_obra];
+    const sqlUpdate = `UPDATE obras SET projetista = ?, nome_obra = ?, endereco = ?, torre = ?, data_concreto = ?, pavimento_ativo = ?, pilar = ?, cor_pilar = ?, grade = ?, cor_grade = ?, viga = ?, cor_viga = ?, garfo = ?, cor_garfo = ?, laje = ?, cor_laje = ? WHERE nome_obra = ?`;
+    const valuesUpdate = [projetista, nome_obra_novo , endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje, nome_obra];
     db.query(sqlUpdate, valuesUpdate, (err, result) => {
         if (err) {
             console.error('Erro no banco de dados:', err);
@@ -112,8 +112,15 @@ app.post('/api/pavimentos', (req, res) => {
             console.error('Erro ao inserir dados na tabela pavimentos:', err);
             return res.status(500).json({ error: 'Erro ao inserir dados na tabela pavimentos' });
         }
-        // Se a inserção foi bem-sucedida, enviar uma mensagem de sucesso
-        res.status(201).json({ message: 'Dados inseridos com sucesso na tabela pavimentos' });
+        const sqlPavimentosNotAtivo = `UPDATE pavimentos SET ativo = 0 WHERE obra = '${obra_nome}' AND data_prev != '${data_prev}';`
+        db.query(sqlPavimentosNotAtivo, valuesPavimentos, (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Erro ao dar set 0 no ativo dos demais pavimentos' });
+            }
+            // Se a inserção foi bem-sucedida, enviar uma mensagem de sucesso
+        res.status(201).json({ message: 'Dados inseridos com sucesso na tabela pavimentos e desativados demais pavimentos' });
+        });
     });
 });
 

@@ -40,6 +40,19 @@
             overflow: auto;
             background-color: rgba(0,0,0,0.4);
         }
+        .modalPav {
+            display: none;
+            position: fixed;
+            /* z-index: 1000; */
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%); /* Centraliza o modal na tela */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
         .modal-dialog {
             background-color: #fefefe;
             margin: 15% auto;
@@ -207,7 +220,7 @@
                       <label for="dataPavimento">Data</label>
                       <input type="date" id="dataPavimento" class="form-control" required>
                   </div>
-                  <button type="submit" class="btn btn-primary">
+                  <button type="submit" class="btn btn-primary" onclick="add_pavimento()">
                     <i class="fas fa-save"></i>
                   </button>
               </form>
@@ -242,6 +255,37 @@
       </div>
   </div>
 </div>
+
+<!-- Modal para visualizar todos os pavimentos -->
+<div id="modalPavimentosGerais" class="modal" style="width: 1250px; top: 10%;left: 5%;height: 500px; border-radius: 10px;overflow: hidden">
+    <div style="width: 1200px;margin-left: 25px;margin-top: 25px;height: 450px; border-radius: 10px;background-color: #f7f9fc;" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" style="margin-left: 16em;">Pavimentos da obra</h3>
+                <button class="btn btn-primary" onclick="abrir_modal_add_pavimentos('obra.nome_obra')" style="margin-left: 22em;">
+                    <i class="fas fa-plus"></i>
+                </button>  
+                <a type="button" class="btn btn-secondary" onclick="toggleModal('modalPavimentosGerais')">
+                    <i class="fas fa-arrow-left"></i>
+                </a>   
+            </div>
+            <div class="modal-body">
+                <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar...">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Nome</th>
+                            <th onclick="sortTable(1)">Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaPavimentosGerais"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Modal para editar obra -->
 <div id="modalEditObra" class="modal">
@@ -306,7 +350,7 @@
                       <label for="editLaje">Laje</label>
                       <input type="text" id="editLaje" class="form-control" required>
                   </div>
-                  <button type="submit" class="btn btn-primary">
+                  <button type="submit" class="btn btn-primary" onclick="update_obra()">
                       <i class="fas fa-save"></i>
                   </button>                
               </form>
@@ -398,10 +442,10 @@
                     </select>
                 </td>
                 <td>
-                    <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">
+                    <button class="btn btn-warning btn-sm" onclick="abrir_modal_add_pavimentos('${obra.nome_obra}')">
                         <i class="fas fa-plus"></i>
                     </button>
-                    <a href="pavimentos.html?index=${index}" class="btn btn-secondary btn-sm">
+                    <a class="btn btn-secondary btn-sm" onclick="puxa_pavimentos_para_modal('${obra.nome_obra}');toggleModal('modalPavimentosGerais')">
                         <i class="fas fa-list"></i>
                     </a>
                     <button class="btn btn-info btn-sm" onclick="loadEditObra('${obra.nome_obra}')">
@@ -421,11 +465,11 @@
         console.log(`Iniciando insert_bd_obra()`);
         var obra = {
             projetista: document.getElementById('projetista').value,
-            nomeObra: document.getElementById('nomeObra').value,
+            nome_obra: document.getElementById('nomeObra').value,
             endereco: document.getElementById('enderecoObra').value,
             torre: document.getElementById('torre').value,
-            dataConcreto: document.getElementById('dataConcreto').value,
-            pavimentoAtivo: document.getElementById('pavimentoAtivo').value,
+            data_concreto: document.getElementById('dataConcreto').value,
+            pavimento_ativo: document.getElementById('pavimentoAtivo').value,
             pilar: document.getElementById('pilar').value,
             grade: document.getElementById('grade').value,
             viga: document.getElementById('viga').value,
@@ -453,8 +497,138 @@
             alert(error);
             });
         console.log(`Finalizado insert_bd_obra()`);
+        //limpa modal
+        document.getElementById('projetista').value = ''
+        document.getElementById('nomeObra').value = ''
+        document.getElementById('enderecoObra').value = ''
+        document.getElementById('torre').value = ''
+        document.getElementById('dataConcreto').value = ''
+        document.getElementById('pavimentoAtivo').value = ''
+        document.getElementById('pilar').value = ''
+        document.getElementById('grade').value = ''
+        document.getElementById('viga').value = ''
+        document.getElementById('garfo').value = ''
+        document.getElementById('laje').value = ''
+        //fecha modal e recarrega tabela
         toggleModal('modalObra');
         reload_table();
+    }
+
+    //carregar no modal de update os dados da obra
+    function loadEditObra(nome_obra) {
+        fetch(`http://localhost:3000/api/dados/${encodeURIComponent(nome_obra)}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('editProjetista').value = data[0].projetista;
+            document.getElementById('editNomeObra').value = data[0].nome_obra;
+            document.getElementById('editEnderecoObra').value = data[0].endereco;
+            document.getElementById('editTorre').value = data[0].torre;
+            document.getElementById('editDataConcreto').value = data[0].data_concreto;
+            document.getElementById('editPavimentoAtivo').value = data[0].pavimento_ativo;
+            document.getElementById('editPilar').value = data[0].pilar;
+            document.getElementById('editGrade').value = data[0].grade;
+            document.getElementById('editViga').value = data[0].viga;
+            document.getElementById('editGarfo').value = data[0].garfo;
+            document.getElementById('editLaje').value = data[0].laje;
+            document.getElementById('modalEditObra').setAttribute('nome-obra-original', data[0].nome_obra);
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+        });
+        toggleModal('modalEditObra');
+    }
+
+    //enviar put para atualizar dados de obra ja existente
+    function update_obra() {
+        console.log('Iniciado update_obra()');  // Para depuração
+        event.preventDefault();
+        const nome_obra_original = document.getElementById('modalEditObra').getAttribute('nome-obra-original');
+        var obra = {
+            projetista : document.getElementById('editProjetista').value,
+            nome_obra : document.getElementById('editNomeObra').value,
+            endereco : document.getElementById('editEnderecoObra').value,
+            torre : document.getElementById('editTorre').value,
+            data_concreto : document.getElementById('editDataConcreto').value,
+            pavimento_ativo : document.getElementById('editPavimentoAtivo').value,
+            pilar : document.getElementById('editPilar').value,
+            grade : document.getElementById('editGrade').value,
+            viga : document.getElementById('editViga').value,
+            garfo : document.getElementById('editGarfo').value,
+            laje : document.getElementById('editLaje').value
+        };
+        console.log('nome obra: ' + nome_obra_original);  // Para depuração
+        fetch(`http://localhost:3000/api/dados/${encodeURIComponent(nome_obra_original)}`, {  // Certifique-se de codificar o nome_obra
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(obra),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao atualizar dados: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message);
+            reload_table();  // Recarrega a tabela após a atualização
+        })
+        .catch((error) => {
+            console.error('Erro:', error);  // Melhor usar console para debugar
+            alert(error.message);
+        });
+
+        console.log('Finalizado update_obra()');  // Para depuração
+        toggleModal('modalEditObra');
+        reload_table()
+    }
+
+    //abre modal de adicionar pavimentos e atribui nome obra como atributo
+    function abrir_modal_add_pavimentos(nome_obra) {
+        var modalPavimento = document.getElementById('modalPavimento');
+        modalPavimento.setAttribute('nome_obra', nome_obra);
+        toggleModal('modalPavimento');
+    }
+
+    //adicionar pavimentos á obra
+    function add_pavimento() {
+        event.preventDefault();
+        console.log(`Iniciando insert_bd_obra()`);
+        var nome_obra = document.getElementById('modalPavimento').getAttribute('nome_obra');
+        var pavimento = {
+            obra_nome : nome_obra,
+            nome_pavimento: document.getElementById('nomePavimento').value,
+            data_prev: document.getElementById('dataPavimento').value
+        };
+        fetch('http://localhost:3000/api/pavimentos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(pavimento),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao inserir dados: ' + response.statusText)
+            }
+            return response.json()
+        })
+        .then(data => {
+            alert(data.message);
+        })
+        .catch((error) => {
+            alert(error);
+            });
+        console.log(`Finalizado insert_pavimento()`);
+        document.getElementById('pavimentoForm').reset();
+        toggleModal('modalPavimento');
+        reload_table();
+    }
+
+    function puxa_pavimentos_para_modal(obra_nome) {
+        const table = document.getElementById('tabelaPavimentosGerais').getAttribute('nome_obra');
+        // falta fazer para puxar dados dos pavimentos daquela obra e colocar nessa table
     }
 
     function atualizarCor(index, campo, cor) {
@@ -484,111 +658,13 @@
         return texto; // Retorna o texto original se estiver dentro do limite
     }
 
+    // Abrir modal a partir do argumento. ex: modal para criar nova obra, modal para alterar dados obra etc
     function toggleModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
     }
 
-    function selectObra(index) {
-        const modalPavimento = document.getElementById('modalPavimento');
-        modalPavimento.setAttribute('data-obra-index', index);
-        toggleModal('modalPavimento');
-    }
 
-    document.getElementById('pavimentoForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const index = document.getElementById('modalPavimento').getAttribute('data-obra-index');
-        const pavimento = {
-            nome: document.getElementById('nomePavimento').value,
-            data: document.getElementById('dataPavimento').value
-        };
-        obras[index].pavimentos.push(pavimento);
-        localStorage.setItem('obras', JSON.stringify(obras));
-        document.getElementById('pavimentoForm').reset();
-        toggleModal('modalPavimento');
-        displayObras();
-    });
-
-    //enviar put para atualizar dados de obra ja existente
-    function loadEditObra(nome_obra) {
-        console.log(nome_obra)
-        fetch(`http://localhost:3000/api/dados/${encodeURIComponent(nome_obra)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao buscar dados: ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            document.getElementById('editProjetista').value = data.projetista;
-            document.getElementById('editNomeObra').value = data.nome_obra;
-            document.getElementById('editEnderecoObra').value = data.endereco;
-            document.getElementById('editTorre').value = data.torre;
-            document.getElementById('editDataConcreto').value = data.data_concreto;
-            document.getElementById('editPavimentoAtivo').value = data.pavimento_ativo;
-            document.getElementById('editPilar').value = data.pilar;
-            document.getElementById('editGrade').value = data.grade;
-            document.getElementById('editViga').value = data.viga;
-            document.getElementById('editGarfo').value = data.garfo;
-            document.getElementById('editLaje').value = data.laje;
-            document.getElementById('modalEditObra').setAttribute('data-obra-index', index);
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-        });
-
-
-        // event.preventDefault();  // Isso evita o comportamento padrão do formulário
-        // console.log('Iniciado update_obra()');  // Para depuração
-        // const formData = new FormData(document.getElementById('formDados'));
-        // const data = Object.fromEntries(formData.entries());
-        // const nome_obra = data.nome_obra;
-        // console.log('nome obra: ' + nome_obra);  // Para depuração
-        // fetch(`http://localhost:3000/api/dados/${encodeURIComponent(nome_obra)}`, {  // Certifique-se de codificar o nome_obra
-        //     method: 'PUT',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(data),
-        // })
-        // .then(response => {
-        //     if (!response.ok) {
-        //         throw new Error('Erro ao atualizar dados: ' + response.statusText);
-        //     }
-        //     return response.json();
-        // })
-        // .then(data => {
-        //     alert(data.message);
-        //     reload_table();  // Recarrega a tabela após a atualização
-        // })
-        // .catch((error) => {
-        //     console.error('Erro:', error);  // Melhor usar console para debugar
-        //     alert(error.message);
-        // });
-
-        // console.log('Finalizado update_obra()');  // Para depuração
-        toggleModal('modalEditObra');
-    }
-
-    document.getElementById('editObraForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const index = document.getElementById('modalEditObra').getAttribute('data-obra-index');
-        const obra = obras[index];
-        obra.projetista = document.getElementById('editProjetista').value;
-        obra.nomeObra = document.getElementById('editNomeObra').value;
-        obra.endereco = document.getElementById('editEnderecoObra').value;
-        obra.torre = document.getElementById('editTorre').value;
-        obra.dataConcreto = document.getElementById('editDataConcreto').value;
-        obra.pavimentoAtivo = document.getElementById('editPavimentoAtivo').value;
-        obra.pilar = document.getElementById('editPilar').value;
-        obra.grade = document.getElementById('editGrade').value;
-        obra.viga = document.getElementById('editViga').value;
-        obra.garfo = document.getElementById('editGarfo').value;
-        obra.laje = document.getElementById('editLaje').value;
-        localStorage.setItem('obras', JSON.stringify(obras));
-        toggleModal('modalEditObra');
-        displayObras();
-    });
 
     document.getElementById('filterInput').addEventListener('input', function() {
         const filter = this.value.toLowerCase();
