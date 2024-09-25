@@ -128,7 +128,7 @@
 
 <!-- Modal para adicionar obra -->
 <div id="modalObra" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document" style="max-width: 600px; top: 0%;">
+  <div class="modal-dialog" role="document" style="max-width: 600px; top: -30%;border-radius: 10px;">
       <div class="modal-content">
           <div class="modal-header">
               <h5 class="modal-title">Cadastrar Obra</h5>
@@ -203,7 +203,7 @@
 </div>
 
 <!-- Modal para adicionar pavimento -->
-<div id="modalPavimento" class="modal">
+<div id="modalPavimento" class="modal" style="z-index: 1050;">
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
@@ -257,30 +257,33 @@
 </div>
 
 <!-- Modal para visualizar todos os pavimentos -->
-<div id="modalPavimentosGerais" class="modal" style="width: 1250px; top: 10%;left: 5%;height: 500px; border-radius: 10px;overflow: hidden">
-    <div style="width: 1200px;margin-left: 25px;margin-top: 25px;height: 450px; border-radius: 10px;background-color: #f7f9fc;" >
+<div id="modalPavimentosGerais" class="modal" style="width: 1250px; top: 5%;left: 5%;height: 550px; border-radius: 10px;overflow: hidden">
+    <div style="width: 1200px;margin-left: 25px;margin-top: 25px;height: 500px; border-radius: 10px;background-color: #f7f9fc;" >
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" style="margin-left: 16em;">Pavimentos da obra</h3>
-                <button class="btn btn-primary" onclick="abrir_modal_add_pavimentos('obra.nome_obra')" style="margin-left: 22em;">
+                <button class="btn btn-primary" onclick="abrir_modal_add_pavimentos(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))" style="margin-left: 22em;">
                     <i class="fas fa-plus"></i>
                 </button>  
-                <a type="button" class="btn btn-secondary" onclick="toggleModal('modalPavimentosGerais')">
+                <a type="button" class="btn btn-secondary" onclick="toggleModal('modalPavimentosGerais');reload_table();document.getElementById('tabelaPavimentosGerais').innerHTML = ''">
                     <i class="fas fa-arrow-left"></i>
                 </a>   
             </div>
             <div class="modal-body">
                 <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar...">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th onclick="sortTable(0)">Nome</th>
-                            <th onclick="sortTable(1)">Data</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaPavimentosGerais"></tbody>
-                </table>
+                <div style="max-height: 340px; overflow-y: auto;">
+                    <table class="table table-striped" id="tabelaPavimentosGeraisHead" style="width: 100%; table-layout: fixed;">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nome</th>
+                                <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Data</th>
+                                <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ativo</th>
+                                <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaPavimentosGerais"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -289,7 +292,7 @@
 
 <!-- Modal para editar obra -->
 <div id="modalEditObra" class="modal">
-  <div class="modal-dialog">
+  <div class="modal-dialog" style="max-width: 600px; top: -30%;border-radius: 10px;">
       <div class="modal-content">
           <div class="modal-header">
               <h5 class="modal-title">Editar Obra</h5>
@@ -445,7 +448,7 @@
                     <button class="btn btn-warning btn-sm" onclick="abrir_modal_add_pavimentos('${obra.nome_obra}')">
                         <i class="fas fa-plus"></i>
                     </button>
-                    <a class="btn btn-secondary btn-sm" onclick="puxa_pavimentos_para_modal('${obra.nome_obra}');toggleModal('modalPavimentosGerais')">
+                    <a class="btn btn-secondary btn-sm" onclick="atualiza_modal_pavimentos_geral('${obra.nome_obra}');toggleModal('modalPavimentosGerais')">
                         <i class="fas fa-list"></i>
                     </a>
                     <button class="btn btn-info btn-sm" onclick="loadEditObra('${obra.nome_obra}')">
@@ -624,10 +627,37 @@
         document.getElementById('pavimentoForm').reset();
         toggleModal('modalPavimento');
         reload_table();
+        atualiza_modal_pavimentos_geral(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))
     }
 
-    function puxa_pavimentos_para_modal(obra_nome) {
-        const table = document.getElementById('tabelaPavimentosGerais').getAttribute('nome_obra');
+    //adiciona no modal de pavimentos gerais os pavimentos daquela obra específica
+    function atualiza_modal_pavimentos_geral(obra_nome) {
+        console.log('Tabela geral de pavimentos sendo atualizada...')
+        document.getElementById('modalPavimentosGerais').setAttribute('nome_obra', obra_nome);
+        const table = document.getElementById('tabelaPavimentosGerais')
+        table.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+        fetch(`http://localhost:3000/api/pavimentos/${obra_nome}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            data.forEach((pavimento, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${pavimento.nome_pavimento}</td>
+                    <td>${pavimento.data_prev}</td>
+                    <td>${pavimento.ativo}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                table.appendChild(row);
+            })})
+        .catch(error => console.error('Erro:', error));
         // falta fazer para puxar dados dos pavimentos daquela obra e colocar nessa table
     }
 

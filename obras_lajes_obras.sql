@@ -29,7 +29,7 @@ CREATE TABLE `obras` (
   `nome_obra` varchar(200) DEFAULT NULL,
   `endereco` varchar(200) DEFAULT NULL,
   `torre` char(50) DEFAULT NULL,
-  `data_concreto` char(50) DEFAULT NULL,
+  `data_concreto` datetime DEFAULT NULL,
   `pavimento_ativo` char(50) DEFAULT NULL,
   `pilar` char(50) DEFAULT NULL,
   `cor_pilar` char(50) DEFAULT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE `obras` (
   `laje` char(50) DEFAULT NULL,
   `cor_laje` char(50) DEFAULT NULL,
   PRIMARY KEY (`insert_sys`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -51,7 +51,7 @@ CREATE TABLE `obras` (
 
 LOCK TABLES `obras` WRITE;
 /*!40000 ALTER TABLE `obras` DISABLE KEYS */;
-INSERT INTO `obras` VALUES (7,'2024-09-23 12:34:11','teste1','teste1','doce','doce','2005-08-15','doce','doce','#FF0000','doce','#FF0000','doce','#FF0000','doce','#FF0000','doce','#FF0000'),(8,'2024-09-23 14:29:29','teste2','teste2','teste2','teste2','2005-12-15','teste2','teste2','#FF0000','teste2','#FF0000','teste2','#FF0000','teste2','#FF0000','teste2','#FF0000'),(9,'2024-09-23 15:25:21','Emilio',NULL,'teste3','teste3',NULL,NULL,'teste3',NULL,'teste3',NULL,'teste3',NULL,'teste3',NULL,'teste3',NULL);
+INSERT INTO `obras` VALUES (18,'2024-09-24 12:13:23','Anderson','teste1','teste1','teste1','2023-09-25 00:00:00','teste1','teste1',NULL,'teste1',NULL,'teste1',NULL,'teste1',NULL,'teste1',NULL),(19,'2024-09-24 12:13:49','Edno','teste2','teste2','teste2','2004-12-15 00:00:00','teste2','teste2',NULL,'teste2',NULL,'teste2',NULL,'teste2',NULL,'teste2',NULL),(20,'2024-09-24 12:14:06','Tamara','teste33','teste33','teste33','2012-12-12 00:00:00','teste33','teste33',NULL,'teste33',NULL,'teste33',NULL,'teste33',NULL,'teste33',NULL),(21,'2024-09-24 12:43:50','Fabio','teste4','teste4','teste4','2024-09-24 00:00:00','teste4','teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL);
 /*!40000 ALTER TABLE `obras` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -64,4 +64,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-23 16:08:46
+-- Dump completed on 2024-09-25 14:28:33

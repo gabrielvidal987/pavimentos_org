@@ -27,9 +27,10 @@ CREATE TABLE `pavimentos` (
   `data_insert` datetime DEFAULT CURRENT_TIMESTAMP,
   `obra` varchar(50) DEFAULT NULL,
   `nome_pavimento` varchar(50) DEFAULT NULL,
-  `data_prev` varchar(50) DEFAULT NULL,
+  `data_prev` datetime DEFAULT NULL,
+  `ativo` int DEFAULT '1',
   PRIMARY KEY (`insert_sys`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +39,7 @@ CREATE TABLE `pavimentos` (
 
 LOCK TABLES `pavimentos` WRITE;
 /*!40000 ALTER TABLE `pavimentos` DISABLE KEYS */;
-INSERT INTO `pavimentos` VALUES (1,'2024-09-23 11:13:47','65','62','2005-08-20'),(2,'2024-09-23 11:14:57','94','59','2005-09-22'),(3,'2024-09-23 11:18:53','obra1','2','2005-05-20'),(4,'2024-09-23 11:22:49','595','59','2004-12-09'),(5,'2024-09-23 12:34:11','teste1','AMARGO','2005-08-15'),(6,'2024-09-23 14:10:10','teste1','opavimentos24','2025-12-15'),(7,'2024-09-23 14:29:29','teste2','teste2','2005-12-15'),(8,'2024-09-23 15:25:21',NULL,NULL,NULL);
+INSERT INTO `pavimentos` VALUES (17,'2024-09-24 12:13:23','teste1','teste1','2023-09-25 00:00:00',0),(18,'2024-09-24 12:13:49','teste2','teste2','2004-12-15 00:00:00',1),(19,'2024-09-24 12:14:06','teste33','teste33','2012-12-12 00:00:00',1),(20,'2024-09-24 12:21:11','teste1','teste2 do 1','2024-09-24 00:00:00',0),(21,'2024-09-24 12:43:50','teste4','teste4','2024-09-24 00:00:00',1),(22,'2024-09-24 12:53:36','teste1','teste3 do 1','2004-02-01 00:00:00',0),(32,'2024-09-25 14:13:09','teste1','teste4 do 1','2012-12-12 00:00:00',0);
 /*!40000 ALTER TABLE `pavimentos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-23 16:08:46
+-- Dump completed on 2024-09-25 14:28:33

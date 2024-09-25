@@ -33,6 +33,34 @@ app.get('/api/dados', (req, res) => {
     });
 });
 
+// Endpoint para obter os pavimentos de uma obra especifica
+app.get('/api/pavimentos/:obra_nome', (req, res) => {
+    const obra_nome = req.params.obra_nome;
+    const query = 'SELECT * FROM pavimentos WHERE obra = ?';
+    db.query(query, [obra_nome], (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar pavimentos:', err);
+            res.status(500).send('Erro ao buscar pavimentos');
+        } else {
+            // Formatar o campo datetime para DD/MM/YYYY
+            const formattedResults = results.map(result => {
+                if (result.data_prev) {
+                    const data = new Date(result.data_prev);
+                    const dia = String(data.getDate()).padStart(2, '0');
+                    const mes = String(data.getMonth() + 1).padStart(2, '0'); // Meses começam de 0
+                    const ano = data.getFullYear();
+                    result.data_prev = `${dia}/${mes}/${ano}`;
+                }
+                // Converter o campo 'ativo' em 'ativo' ou 'desativado'
+                result.ativo = result.ativo === 1 ? 'sim' : 'não';
+                return result;
+            });
+            res.json(formattedResults);  // Retorna os pavimentos com a data formatada
+        }
+    });
+});
+
+
 // Endpoint para obter dados de uma obra específica pelo nome
 app.get('/api/dados/:nome_obra', (req, res) => {
     const nome_obra = req.params.nome_obra;
@@ -45,7 +73,6 @@ app.get('/api/dados/:nome_obra', (req, res) => {
             return res.status(404).json({ message: 'Obra não encontrada' });
         }
         res.json(results);
-        console.log(results);
     });
 });
 
@@ -123,7 +150,6 @@ app.post('/api/pavimentos', (req, res) => {
         });
     });
 });
-
 
 // Iniciar o servidor
 app.listen(PORT, () => {
