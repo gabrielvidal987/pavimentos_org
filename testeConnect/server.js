@@ -33,6 +33,14 @@ app.get('/api/dados', (req, res) => {
     });
 });
 
+// Endpoint para obter os dados de todos os usuários
+app.get('/api/usuarios', (req, res) => {
+    db.query('SELECT nome, login FROM usuarios ORDER BY nome;', (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+
 // Endpoint para obter os pavimentos de uma obra especifica
 app.get('/api/pavimentos/:obra_nome', (req, res) => {
     const obra_nome = req.params.obra_nome;
@@ -59,7 +67,6 @@ app.get('/api/pavimentos/:obra_nome', (req, res) => {
         }
     });
 });
-
 
 // Endpoint para obter dados de uma obra específica pelo nome
 app.get('/api/dados/:nome_obra', (req, res) => {
@@ -101,6 +108,31 @@ app.post('/api/dados', (req, res) => {
     });
 });
 
+// Endpoint para verificar as infos de login
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+    console.log(`user ${username} senha ${password}`)
+    const sqlQuery = `SELECT senha FROM usuarios WHERE login = ? OR nome = ?;`;
+    db.query(sqlQuery, [username, username], (err, results) => {
+        if (err) {
+            console.error("Erro ao consultar o banco de dados: ", err);
+            res.status(500).json({ error: "Erro interno no servidor" });
+            return;
+        }
+        if (results.length > 0) {
+            const storedPassword = results[0].senha;
+            const isPasswordCorrect = password === storedPassword;
+            res.json({
+                message: isPasswordCorrect ? "Login bem-sucedido" : "Senha incorreta",
+                success: isPasswordCorrect // Retorna true se a senha for correta, false se for incorreta
+            });
+        } else {
+            res.status(404).json({ message: "Usuário não encontrado" });
+        }
+    });
+});
+
+
 // Endpoint para atualizar dados usando nome_obra como identificador
 app.put('/api/dados/:nome_obra', (req, res) => {
     const { nome_obra } = req.params;
@@ -122,6 +154,64 @@ app.put('/api/dados/:nome_obra', (req, res) => {
         res.json({ message: 'Dados atualizados com sucesso' });
     });
 });
+
+// Endpoint para apagar um usuario
+app.put('/api/login/:login', (req, res) => {
+    const { login } = req.params;
+    const sqlDelete = `DELETE FROM usuarios WHERE login = '${login}';`;
+    db.query(sqlDelete, (err, result) => {
+        console.log(result)
+        if (err) {
+            console.error('Erro no banco de dados:', err);
+            return res.status(500).json({ error: 'Erro ao deletar dados na tabela de usuarios' });
+        }
+        if (result.affectedRows === 0) {
+            console.log('usuario não encontrado');
+            return res.status(404).json({ message: 'usuário não encontrado' });
+        }
+        console.log('Usuario deletado com sucesso!');
+        res.json({ message: 'Usuario deletado com sucesso!' });
+    });
+});
+
+
+// Endpoint para adicionar um usuario
+app.put('/api/addlogin/:nome', (req, res) => {
+    const { nome,email,senha } = req.body;
+    const sqlDelete = `INSERT INTO usuarios(nome,login,senha) VALUES ('${nome}','${email}','${senha}');`;
+    db.query(sqlDelete, (err, result) => {
+        if (err) {
+            console.error('Erro no banco de dados:', err);
+            return res.status(500).json({ error: 'Erro ao inserir dados na tabela de usuarios' });
+        }
+        if (result.affectedRows === 0) {
+            console.log('usuario não adicionado');
+            return res.status(404).json({ message: 'usuario não adicionado' });
+        }
+        console.log('Usuario adicionado com sucesso!');
+        res.json({ message: 'Usuario adicionado com sucesso!' });
+    });
+});
+
+// Endpoint para alterar um usuario
+app.put('/api/altlogin/:login', (req, res) => {
+    const { login } = req.params;
+    const { nome,email,senha } = req.body;
+    const sqlUpdate = `UPDATE usuarios SET nome = '${nome}', login = '${email}', senha = '${senha}' WHERE login = '${login}';`;
+    db.query(sqlUpdate, (err, result) => {
+        if (err) {
+            console.error('Erro no banco de dados:', err);
+            return res.status(500).json({ error: 'Erro ao alterar dados na tabela de usuarios' });
+        }
+        if (result.affectedRows === 0) {
+            console.log('usuario não adicionado');
+            return res.status(404).json({ message: 'usuario não alterado' });
+        }
+        console.log('Usuario alterado com sucesso!');
+        res.json({ message: 'Usuario alterado com sucesso!' });
+    });
+});
+
 
 // Endpoint para inserir pavimento novo
 // Endpoint para inserir dados na tabela pavimentos

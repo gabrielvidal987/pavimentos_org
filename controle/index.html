@@ -79,33 +79,52 @@
             </h2>
             <form id="loginForm">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Usuário</label>
-                    <input type="text" id="username" class="form-control" placeholder="Digite seu usuário" required>
+                    <label for="username" class="form-label">Nome de usuário/Email</label>
+                    <input type="text" id="username" class="form-control" placeholder="Digite seu usuário/email" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Senha</label>
                     <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required>
                 </div>
-                <button type="submit"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+                <button type="button" onclick="validar_usuario()"><i class="fas fa-sign-in-alt"></i> Entrar</button>
             </form>
         </div>
     </div>
-
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Evita o envio real do formulário
-
-            // Verificar login (você pode adicionar a lógica de validação aqui)
-            var username = document.getElementById('username').value;
-            var password = document.getElementById('password').value;
-
-            // Simulação simples: se o usuário e senha forem válidos, redirecionar
-            if (username === "alan" && password === "1234") {
-                window.location.href = "controle.html"; // Redirecionar para controle.html
-            } else {
-                alert("Usuário ou senha inválidos");
+        document.getElementById('username').value = "";
+        document.getElementById('password').value = "";
+        function validar_usuario() {
+            if (document.getElementById('username').value == "" || document.getElementById('password').value == "") {
+                alert('Preencha o usuário e a senha');
+                return
             }
-        });
+            var login_dados = {
+                username : String(document.getElementById('username').value),
+                password : String(document.getElementById('password').value)
+            }
+            fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(login_dados),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao inserir dados: ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    window.location.href = "controle.html"; // Redirecionar para controle.html
+                }
+            })
+            .catch((error) => {
+                alert(error);
+                });
+        }
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

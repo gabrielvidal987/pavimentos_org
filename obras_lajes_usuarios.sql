@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: obras_lajes
 -- ------------------------------------------------------
--- Server version	8.0.36
+-- Server version	8.0.37
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,8 +27,9 @@ CREATE TABLE `usuarios` (
   `login` varchar(100) DEFAULT NULL,
   `senha` varchar(100) DEFAULT NULL,
   `ult_acesso` varchar(50) DEFAULT NULL,
+  `nome` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`insert_sys`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,6 +38,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+INSERT INTO `usuarios` VALUES (2,'teste1@gmail','123456',NULL,'teste1'),(3,'teste2@gmail','123456',NULL,'teste2'),(6,'test4@gmail','123456',NULL,'teste4'),(7,'test5@gmail','123456',NULL,'teste5'),(10,'teste3@gmail','12312',NULL,'teste3');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-25 14:28:33
+-- Dump completed on 2024-09-26  1:09:05

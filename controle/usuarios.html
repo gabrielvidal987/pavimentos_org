@@ -54,8 +54,8 @@
     <table class="table table-striped">
         <thead class="thead-light">
             <tr>
-                <th onclick="sortTable(0)">Nome</th>
-                <th onclick="sortTable(1)">E-mail</th>
+                <th>Nome</th>
+                <th>E-mail</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -100,75 +100,194 @@
     </div>
 </div>
 
+<!-- Modal de alteração -->
+<div id="modalAltera" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Alterar Usuário</h5>
+                <button type="button" class="btn-close" onclick="toggleModal('modalAltera')"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formUsuario">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nomeEdit" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="emailEdit" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="senha" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="senhaEdit" required>
+                    </div>
+                    <input type="hidden" id="usuarioIndex" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                
+              <button type="button" class="btn btn-primary" onclick="editarUsuario(document.getElementById('modalAltera').getAttribute('login'))" title="Salvar Usuário">
+                <i class="fas fa-save"></i>
+              </button>            
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     let usuarioEditandoIndex = -1;
 
+    //carrega tabela de usuarios
+    function reload_table() {
+        console.log('Tabela geral de usuários sendo atualizada...')
+        const table = document.getElementById('tabelaUsuarios')
+        table.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+        fetch(`http://localhost:3000/api/usuarios`)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach((usuario, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${usuario.nome}</td>
+                    <td>${usuario.login}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="document.getElementById('modalAltera').setAttribute('login','${usuario.login}');toggleModal('modalAltera')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="removerUsuario('${usuario.login}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                table.appendChild(row);
+            })})
+        .catch(error => console.error('Erro:', error));
+    }
+
+    //abre o modal especificado
     function toggleModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.style.display = modal.style.display === "none" || modal.style.display === "" ? "block" : "none";
-        if (modal.style.display === "none") {
-            resetForm();
-        }
     }
 
-    function resetForm() {
-        document.getElementById('formUsuario').reset();
-        document.getElementById('usuarioIndex').value = '';
-        usuarioEditandoIndex = -1;
-        document.querySelector('.modal-title').textContent = "Cadastrar Usuário";
-    }
-
+    //cria usuario novo
     function salvarUsuario() {
         const nome = document.getElementById('nome').value;
         const email = document.getElementById('email').value;
         const senha = document.getElementById('senha').value;
-
         if (nome && email && senha) {
-            const tabela = document.getElementById('tabelaUsuarios');
-            if (usuarioEditandoIndex > -1) {
-                const linha = tabela.rows[usuarioEditandoIndex];
-                linha.cells[0].innerText = nome;
-                linha.cells[1].innerText = email;
-            } else {
-                const novaLinha = tabela.insertRow();
-                novaLinha.innerHTML = `
-                    <td>${nome}</td>
-                    <td>${email}</td>
-                    <td>
-                        <a href="#" class="text-warning" onclick="editarUsuario(this)">
-                            <i class="fas fa-edit" title="Editar Usuário"></i>
-                        </a>
-                        <a href="#" class="text-danger" onclick="removerUsuario(this)">
-                            <i class="fas fa-trash-alt" title="Remover Usuário"></i>
-                        </a>
-                    </td>
-                `;
-            }
+            console.log(`Adicionando usuario ${nome}`);
+            var user = {
+                nome : nome,
+                email : email,
+                senha : senha
+            };
+            fetch(`http://localhost:3000/api/addlogin/${nome}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao adicionar dados: ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert(data.message);
+                reload_table();
+            })
+            .catch((error) => {
+                alert(error);
+                });
+            console.log(`Finalizado adição de usuario`);
             toggleModal('modalCadastro');
-            resetForm();
+        }
+        else {
+            alert('Preencha todos os campos')
         }
     }
 
-    function editarUsuario(element) {
-        const linha = element.parentElement.parentElement;
-        const nome = linha.cells[0].innerText;
-        const email = linha.cells[1].innerText;
-
-        document.getElementById('nome').value = nome;
-        document.getElementById('email').value = email;
-        document.getElementById('usuarioIndex').value = Array.from(linha.parentNode.children).indexOf(linha);
-        usuarioEditandoIndex = Array.from(linha.parentNode.children).indexOf(linha);
-        document.querySelector('.modal-title').textContent = "Editar Usuário";
-
-        toggleModal('modalCadastro');
+    //edita um usuario ja existente
+    function editarUsuario(login) {
+        console.log('Alterando usuario')
+        const nome = document.getElementById('nomeEdit').value;
+        const email = document.getElementById('emailEdit').value;
+        const senha = document.getElementById('senhaEdit').value;
+        if (nome && email && senha) {
+            var dados = {
+                nome : nome,
+                email : email,
+                senha : senha
+            }
+            fetch(`http://localhost:3000/api/altlogin/${login}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dados),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao alterar dados: ' + response.statusText)
+                    }
+                    return response.json()
+                })
+                .then(data => {
+                    alert(data.message);
+                    reload_table();
+                    document.getElementById('nomeEdit').value = "";
+                    document.getElementById('emailEdit').value = "";
+                    document.getElementById('senhaEdit').value = "";
+                })
+                .catch((error) => {
+                    alert(error);
+                    });
+                console.log(`Finalizado alteração de usuario`);
+            toggleModal('modalAltera');
+        }
+        else { alert('Preencha todos os dados!') }
+        
     }
 
-    function removerUsuario(element) {
-        const linha = element.parentElement.parentElement;
-        if (confirm("Você tem certeza que deseja remover este usuário?")) {
-            linha.remove();
+    //remove o usuario (nasce um confirm para confirmar se tem certeza da remoção)
+    function removerUsuario(login) {
+        let result = confirm("Você tem certeza que deseja deletar o usuario?");
+        if (result) {
+            console.log(`Deletando usuario ${login}`);
+            var user = {
+                email : login
+            };
+            fetch(`http://localhost:3000/api/login/${login}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao apagar dados: ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert(data.message);
+                reload_table();
+            })
+            .catch((error) => {
+                alert(error);
+                });
+            console.log(`Finalizado delet de usuario`);
+        } else {
+            return
         }
     }
+
+    reload_table()
 </script>
 </body>
 </html>

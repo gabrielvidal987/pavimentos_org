@@ -85,14 +85,11 @@
     <h2 class="text-center">Controle de Obras</h2>
     
     <button class="btn btn-primary mb-3" onclick="toggleModal('modalObra')">
-      <i class="fa-sharp fa-solid fa-building"></i> <!-- Ícone de "mais" -->
+      <i class="fa-sharp fa-solid fa-building"></i>
     </button>
-
-    <div class="icon-container">
-        <a href="usuarios.html" class="btn btn-secondary" title="Manutenção de Usuários">
-          <i class="fas fa-users-cog"></i>
-        </a>
-    </div>
+    <button class="btn btn-primary mb-3" onclick="window.location.href = 'usuarios.html';" title="Manutenção de Usuários">
+        <i class="fas fa-users-cog"></i>
+      </button>
     
     
     <!-- Ícone de sair do sistema -->
@@ -619,6 +616,7 @@
         })
         .then(data => {
             alert(data.message);
+            atualiza_modal_pavimentos_geral(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))
         })
         .catch((error) => {
             alert(error);
@@ -626,9 +624,8 @@
         console.log(`Finalizado insert_pavimento()`);
         document.getElementById('pavimentoForm').reset();
         toggleModal('modalPavimento');
-        reload_table();
-        atualiza_modal_pavimentos_geral(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))
-    }
+        
+    } //depois chama reload_table()
 
     //adiciona no modal de pavimentos gerais os pavimentos daquela obra específica
     function atualiza_modal_pavimentos_geral(obra_nome) {
