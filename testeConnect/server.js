@@ -174,6 +174,44 @@ app.put('/api/login/:login', (req, res) => {
     });
 });
 
+// Endpoint para apagar um pavimento
+app.put('/api/delpav/:pavimento/:obra', (req, res) => {
+    const { pavimento , obra } = req.params;
+    const sqlDelete = `DELETE FROM pavimentos WHERE nome_pavimento = '${pavimento}' AND obra = '${obra}';`;
+    db.query(sqlDelete, (err, result) => {
+        if (err) {
+            console.error('Erro no banco de dados:', err);
+            return res.status(500).json({ error: 'Erro ao deletar dados na tabela de pavimentos' });
+        }
+        if (result.affectedRows === 0) {
+            console.log('pavimento não encontrado');
+            return res.status(404).json({ message: 'pavimento não encontrado' });
+        }
+        console.log('Usuario deletado com sucesso!');
+        res.json({ message: 'pavimento deletado com sucesso!' });
+    });
+});
+
+//altera os dados de um pavimento
+app.put('/api/altpav/:pavimento/:obra', (req, res) => {
+    const { pavimento , obra } = req.params;
+    const { novo_pavimento,nova_data } = req.body;
+    const sqlUpdate = `UPDATE pavimentos SET nome_pavimento = '${novo_pavimento}', data_prev = '${nova_data}' WHERE nome_pavimento = '${pavimento}' AND obra = '${obra}';`;
+    db.query(sqlUpdate, (err, result) => {
+        if (err) {
+            console.error('Erro no banco de dados:', err);
+            return res.status(500).json({ error: 'Erro ao alterar dados na tabela de pavimentos' });
+        }
+        if (result.affectedRows === 0) {
+            console.log('pavimento não encontrado');
+            return res.status(404).json({ message: 'pavimento não encontrado' });
+        }
+        console.log('Usuario alterado com sucesso!');
+        res.json({ message: 'pavimento alterado com sucesso!' });
+    });
+});
+
+
 
 // Endpoint para adicionar um usuario
 app.put('/api/addlogin/:nome', (req, res) => {

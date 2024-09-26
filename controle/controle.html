@@ -227,7 +227,7 @@
 </div>
 
 <!-- Modal para editar pavimento -->
-<div id="modalEditPavimento" class="modal">
+<div id="modalEditPavimento" class="modal" style="z-index: 1050;">
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
@@ -244,7 +244,7 @@
                       <label for="editDataPavimento">Data</label>
                       <input type="date" id="editDataPavimento" class="form-control" required>
                   </div>
-                  <button type="submit" class="btn btn-primary">
+                  <button type="button" class="btn btn-primary" onclick="altera_pavimento()">
                       <i class="fas fa-save"></i>
                   </button>
               </form>
@@ -286,14 +286,13 @@
     </div>
 </div>
 
-
 <!-- Modal para editar obra -->
 <div id="modalEditObra" class="modal">
   <div class="modal-dialog" style="max-width: 600px; top: -30%;border-radius: 10px;">
       <div class="modal-content">
           <div class="modal-header">
               <h5 class="modal-title">Editar Obra</h5>
-              <button type="button" class="close" onclick="toggleModal('modalEditObra')">&times;</button>
+              <button type="button" class="close" onclick="reload_table();toggleModal('modalEditObra')">&times;</button>
           </div>
           <div class="modal-body">
               <form id="editObraForm">
@@ -636,7 +635,6 @@
         fetch(`http://localhost:3000/api/pavimentos/${obra_nome}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data)
             data.forEach((pavimento, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -644,10 +642,10 @@
                     <td>${pavimento.data_prev}</td>
                     <td>${pavimento.ativo}</td>
                     <td>
-                        <button class="btn btn-info btn-sm">
+                        <button class="btn btn-info btn-sm" onclick="document.getElementById('modalEditPavimento').setAttribute('pavimento','${pavimento.nome_pavimento}');document.getElementById('modalEditPavimento').setAttribute('obra','${obra_nome}');toggleModal('modalEditPavimento')">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm">
+                        <button class="btn btn-danger btn-sm" onclick="deleta_pavimento('${pavimento.nome_pavimento}','${obra_nome}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -656,6 +654,79 @@
             })})
         .catch(error => console.error('Erro:', error));
         // falta fazer para puxar dados dos pavimentos daquela obra e colocar nessa table
+    }
+
+    function altera_pavimento() {
+        var pavimento = document.getElementById('modalEditPavimento').getAttribute('pavimento');
+        var obra = document.getElementById('modalEditPavimento').getAttribute('obra');
+        const novo_pavimento = document.getElementById('editNomePavimento').value;
+        const nova_data = document.getElementById('editDataPavimento').value;
+        if (novo_pavimento && nova_data) {
+            console.log(`Alterando pavimento ${pavimento}`);
+            var user = {
+                novo_pavimento : novo_pavimento,
+                nova_data : nova_data
+            };
+            fetch(`http://localhost:3000/api/altpav/${pavimento}/${obra}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao alterar pavimento: ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert(data.message);
+                atualiza_modal_pavimentos_geral(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))
+                document.getElementById('editNomePavimento').value = "";
+                document.getElementById('editDataPavimento').value = "";
+                toggleModal('modalEditPavimento')
+            })
+            .catch((error) => {
+                alert(error);
+                });
+            console.log(`Finalizado alteração de pavimento`);
+        }
+        else {alert('Preencha os dados do pavimento')}
+    }
+
+    //deleta o pavimento especificado confirmando que o usuario deseja fazer isso
+    function deleta_pavimento(pavimento,obra) {
+        let result = confirm("Você tem certeza que deseja deletar o pavimento?");
+        if (result) {
+            console.log(`Deletando pavimento ${pavimento}`);
+            var user = {
+                nada : 'nada'
+            };
+            fetch(`http://localhost:3000/api/delpav/${pavimento}/${obra}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao apagar pavimento: ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert(data.message);
+                atualiza_modal_pavimentos_geral(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))
+            })
+            .catch((error) => {
+                alert(error);
+                });
+            console.log(`Finalizado delet de pavimento`);
+        } else {
+            return
+        }
     }
 
     function atualizarCor(index, campo, cor) {
