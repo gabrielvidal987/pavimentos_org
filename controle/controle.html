@@ -357,6 +357,56 @@
       </div>
   </div>
 </div>
+
+<!-- Modal para visualizar galeria -->
+<div id="modalGallery" class="modal" style="width: 1250px; top: 5%;left: 5%;height: 550px; border-radius: 10px;overflow: hidden">
+    <div style="width: 1200px;margin-left: 25px;margin-top: 25px;height: 500px; border-radius: 10px;background-color: #f7f9fc;" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" style="margin-left: 16em;">Galeria da obra</h3>
+                <button class="btn btn-primary" onclick="abrir_modal_add_image(document.getElementById('modalGallery').getAttribute('nome_obra'))" style="margin-left: 22em;">
+                    <i class="fas fa-plus"></i>
+                </button>  
+                <a type="button" class="btn btn-secondary" onclick="toggleModal('modalGallery');reload_table();document.getElementById('galeriaId').innerHTML = ''">
+                    <i class="fas fa-arrow-left"></i>
+                </a>   
+            </div>
+            <div class="container" id="galeriaId" style="max-width: 100%; max-height: 420px; overflow-y: auto; overflow-x: hidden;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para exibir a imagem em tela cheia -->
+<div id="modalImagem" class="modal" style="width: 1250px; top: 5%;left: 5%;height: 550px; border-radius: 10px;overflow: hidden;z-index: 1050;">
+    <div class="modal-dialo" style="width: 1170px;margin-left: 40px;margin-top: 35px;height: 480px; border-radius: 10px;background-color: #ffffff;" >
+        <div class="modal-content" >
+            <a type="button" class="btn btn-secondary" onclick="toggleModal('modalImagem')" style="margin: 10px; width: 35px;">
+                <i class="fas fa-arrow-left"></i>
+            </a>   
+            <img id="imagemExpandida" src="" style="width: 1110px; height: auto;margin: 30px;"/>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para adicionar imagem na galeria -->
+<div id="modal_add_galeria" class="modal" style="z-index: 1050;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Imagens</h5>
+                <button type="button" class="close" onclick="toggleModal('modal_add_galeria')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="imagem" accept="image/*" capture="camera">
+                    <button type="button" onclick="enviar_foto(document.getElementById('modalGallery').getAttribute('nome_obra'))">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
     let obras = JSON.parse(localStorage.getItem('obras')) || [];
@@ -444,11 +494,14 @@
                     <button class="btn btn-warning btn-sm" onclick="abrir_modal_add_pavimentos('${obra.nome_obra}')">
                         <i class="fas fa-plus"></i>
                     </button>
-                    <a class="btn btn-secondary btn-sm" onclick="atualiza_modal_pavimentos_geral('${obra.nome_obra}');toggleModal('modalPavimentosGerais')">
+                    <button class="btn btn-secondary btn-sm" onclick="atualiza_modal_pavimentos_geral('${obra.nome_obra}');toggleModal('modalPavimentosGerais')">
                         <i class="fas fa-list"></i>
-                    </a>
+                    </button>
                     <button class="btn btn-info btn-sm" onclick="loadEditObra('${obra.nome_obra}')">
                         <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-info btn-sm" onclick="abrir_modal_gallery('${obra.nome_obra}')">
+                        <i class="fas fa-camera"></i>
                     </button>
                 </td>
             `;
@@ -590,6 +643,88 @@
         toggleModal('modalPavimento');
     }
 
+    //abre modal de adicionar imagem na galeria e atribui nome obra como atributo
+    function abrir_modal_add_image(nome_obra) {
+        var modaAddImage = document.getElementById('modal_add_galeria');
+        modaAddImage.setAttribute('nome_obra', nome_obra);
+        toggleModal('modal_add_galeria');
+    }
+
+    //abre modal da galeria
+    function abrir_modal_gallery(nome_obra) {
+        console.log(nome_obra)
+        document.getElementById('galeriaId').innerHTML = ''
+        var modalGallery = document.getElementById('modalGallery');
+        modalGallery.setAttribute('nome_obra', nome_obra);
+        atualiza_modal_galeria(nome_obra)
+        toggleModal('modalGallery');
+    }
+
+    //atualiza as fotos do modal de galeria
+    function atualiza_modal_galeria(nome_obra) {
+            console.log('Tabela geral de imagens sendo atualizada...')
+            const div_galeria = document.getElementById('galeriaId')
+            div_galeria.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+            fetch(`http://localhost:3000/api/getimage/${nome_obra}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach((imagem, index) => {
+                    const img = document.createElement('img');
+                    img.src = `${imagem.caminho}`
+                    img.onclick = function() {
+                        // Ao clicar, mostra o modal e define a imagem expandida
+                        document.getElementById('imagemExpandida').src = img.src;
+                        document.getElementById('modalImagem').style.display = 'block';
+                    };
+                    img.style.width = '150px';
+                    img.style.height = '100px';
+                    img.style.marginLeft = '10px';
+                    img.style.marginTop = '10px';
+                    img.style.marginBottom = '10px';
+                    img.style.marginRight = '10px';
+                    img.style.borderRadius = '10px';
+                    img.style.objectFit = 'cover'; // Para manter a proporção e cortar se necessário
+                    div_galeria.appendChild(img);
+                })})
+        }
+
+    //envia imagem para o servidor
+    function enviar_foto(nome_obra) {
+        console.log('Iniciado update da imagem');
+        const formData = new FormData();
+        const fileInput = document.querySelector('input[name="imagem"]');
+        const file = fileInput.files[0];
+        // Verifica se um arquivo foi selecionado
+        if (!file) {
+            alert('Selecione um arquivo.');
+            return;
+        }
+        // Adiciona o arquivo e o nome da obra ao FormData
+        formData.append('imagem', file);
+        formData.append('obra', nome_obra);
+        fetch('http://localhost:3000/api/upload', {
+            method: 'POST',
+            body: formData,  // Envia o FormData com o arquivo e nome da obra
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao enviar imagem: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            fileInput.value = "";
+            atualiza_modal_galeria(nome_obra)
+            abrir_modal_add_image(document.getElementById('modalGallery').getAttribute('nome_obra'));
+        })
+        .catch((error) => {
+            console.error('Erro:', error);
+            alert(error.message);
+        });
+
+        console.log('finalizando update da imagem');
+    }
+
     //adicionar pavimentos á obra
     function add_pavimento() {
         event.preventDefault();
@@ -656,6 +791,7 @@
         // falta fazer para puxar dados dos pavimentos daquela obra e colocar nessa table
     }
 
+    //altera os dados do pavimento selecionado
     function altera_pavimento() {
         var pavimento = document.getElementById('modalEditPavimento').getAttribute('pavimento');
         var obra = document.getElementById('modalEditPavimento').getAttribute('obra');
@@ -761,8 +897,6 @@
         const modal = document.getElementById(modalId);
         modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
     }
-
-
 
     document.getElementById('filterInput').addEventListener('input', function() {
         const filter = this.value.toLowerCase();
