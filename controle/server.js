@@ -39,6 +39,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 // Endpoint para upload de imagens
 app.post('/api/upload', upload.single('imagem'), (req, res) => {
+    console.log('Requisição de inserção de imagem recebida')
     if (!req.file) {
         return res.status(400).send('Nenhum arquivo enviado!');
     }
@@ -51,37 +52,45 @@ app.post('/api/upload', upload.single('imagem'), (req, res) => {
             return res.status(500).json({ error: 'Erro ao salvar caminho da imagem' });
         }
         res.status(201).json({ message: 'Imagem enviada e salva com sucesso!', path: imagemPath });
+        console.log('Imagem recebida e salva com sucesso!')
     });
 });
 
 // Endpoint para buscar o caminho das imagens no sql
 app.get('/api/getimage/:nome_obra', (req, res) => {
     const nome_obra = req.params.nome_obra;
+    console.log('Requisição para pegar galeria da obra ' + nome_obra)
     db.query(`SELECT caminho FROM galeria WHERE obra = '${nome_obra}' ORDER BY id_foto;`, (err, results) => {
         if (err) throw err;
         res.json(results);
+        console.log('Galeria retornada!')
     });
 });
 
 // Endpoint para obter os dados de todas as obras
 app.get('/api/dados', (req, res) => {
+    console.log('Requisição para pegar os dados de todas as obras')
     db.query('SELECT o.insert_sys, o.data_insert, o.projetista, o.nome_obra, o.endereco, o.torre, p.data_prev AS data_concreto, p.nome_pavimento AS pavimento_ativo, o.pilar, o.cor_pilar, o.grade, o.cor_grade, o.viga, o.cor_viga, o.garfo, o.cor_garfo, o.laje, o.cor_laje FROM obras o LEFT JOIN pavimentos p ON o.nome_obra = p.obra AND p.ativo = 1;', (err, results) => {
         if (err) throw err;
         res.json(results);
+        console.log('Retornado os dados de todas as obras')
     });
 });
 
 // Endpoint para obter os dados de todos os usuários
 app.get('/api/usuarios', (req, res) => {
+    console.log('Requisição para pegar dados dos usuarios')
     db.query('SELECT nome, login FROM usuarios ORDER BY nome;', (err, results) => {
         if (err) throw err;
         res.json(results);
+        console.log('Retornados dados dos usuarios')
     });
 });
 
 // Endpoint para obter os pavimentos de uma obra especifica
 app.get('/api/pavimentos/:obra_nome', (req, res) => {
     const obra_nome = req.params.obra_nome;
+    console.log('Requisição para pegar pavimentos da obra ' + obra_nome)
     const query = 'SELECT * FROM pavimentos WHERE obra = ?';
     db.query(query, [obra_nome], (err, results) => {
         if (err) {
@@ -102,6 +111,7 @@ app.get('/api/pavimentos/:obra_nome', (req, res) => {
                 return result;
             });
             res.json(formattedResults);  // Retorna os pavimentos com a data formatada
+            console.log('Retornados os pavimentos da obra')
         }
     });
 });
@@ -109,21 +119,25 @@ app.get('/api/pavimentos/:obra_nome', (req, res) => {
 // Endpoint para obter dados de uma obra específica pelo nome
 app.get('/api/dados/:nome_obra', (req, res) => {
     const nome_obra = req.params.nome_obra;
+    console.log('Requisição para obter os dados da obra ' + nome_obra)
     db.query(`SELECT * FROM obras WHERE nome_obra = '${nome_obra}'`, (err, results) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: 'Erro ao buscar dados' });
         }
         if (results.length === 0) {
+            console.log('Obra não encontrada')
             return res.status(404).json({ message: 'Obra não encontrada' });
         }
         res.json(results);
+        console.log('Retornados os dados da obra')
     });
 });
 
-// Endpoint para inserir dados
+// Endpoint para inserir dados de nova obra / inserir nova obra
 app.post('/api/dados', (req, res) => {
     const { projetista, nome_obra, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje } = req.body;
+    console.log('Requisição para inserir dados de uma nova obra. nome da obra: ' + nome_obra)
     // Primeiro INSERT na tabela obras
     const sqlObras = 'INSERT INTO obras (projetista, nome_obra, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const valuesObras = [projetista, nome_obra, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje];
@@ -132,6 +146,7 @@ app.post('/api/dados', (req, res) => {
             console.error(err);
             return res.status(500).json({ error: 'Erro ao inserir dados na tabela de obras' });
         }
+        console.log('Obra inserida no BD')
         // Segundo INSERT na tabela pavimentos
         const sqlPavimentos = 'INSERT INTO pavimentos (obra, nome_pavimento, data_prev,ativo) VALUES (?, ?, ?,1)';
         const valuesPavimentos = [nome_obra, pavimento_ativo, data_concreto];
@@ -140,6 +155,7 @@ app.post('/api/dados', (req, res) => {
                 console.error(err);
                 return res.status(500).json({ error: 'Erro ao inserir dados na tabela de pavimentos' });
             }
+            console.log('Criado pavimento dessa obra no bd de pavimentos')
             // Resposta de sucesso após ambos os inserts
             res.status(201).json({ message: 'Dados inseridos com sucesso nas tabelas de obras e pavimentos'});
         });
@@ -164,8 +180,10 @@ app.post('/api/login', (req, res) => {
                 message: isPasswordCorrect ? "Login bem-sucedido" : "Senha incorreta",
                 success: isPasswordCorrect // Retorna true se a senha for correta, false se for incorreta
             });
+            console.log(res.message)
         } else {
-            res.status(404).json({ message: "Usuário não encontrado" });
+            res.json({ message: "Usuário não encontrado"});
+            console.log('usuario n encotnrado')
         }
     });
 });
@@ -174,6 +192,7 @@ app.post('/api/login', (req, res) => {
 // Endpoint para atualizar dados usando nome_obra como identificador
 app.put('/api/dados/:nome_obra', (req, res) => {
     const { nome_obra } = req.params;
+    console.log('Requisição para atualizar/alterar dados da obra ' + nome_obra)
     const { projetista, nome_obra_novo, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje } = req.body;
     console.log('Atualizando obra:', nome_obra);  // Para verificar o nome_obra recebido
     const sqlUpdate = `UPDATE obras SET projetista = ?, nome_obra = ?, endereco = ?, torre = ?, data_concreto = ?, pavimento_ativo = ?, pilar = ?, cor_pilar = ?, grade = ?, cor_grade = ?, viga = ?, cor_viga = ?, garfo = ?, cor_garfo = ?, laje = ?, cor_laje = ? WHERE nome_obra = ?`;
@@ -188,7 +207,7 @@ app.put('/api/dados/:nome_obra', (req, res) => {
             console.log('Obra não encontrada:', nome_obra);
             return res.status(404).json({ message: 'Obra não encontrada para atualizar' });
         }
-        console.log('Obra atualizada com sucesso:', nome_obra);
+        console.log('Obra atualizada com sucesso');
         res.json({ message: 'Dados atualizados com sucesso' });
     });
 });
@@ -196,6 +215,7 @@ app.put('/api/dados/:nome_obra', (req, res) => {
 // Endpoint para apagar um usuario
 app.put('/api/login/:login', (req, res) => {
     const { login } = req.params;
+    console.log('Requisição para apagar usuario do email ' + login)
     const sqlDelete = `DELETE FROM usuarios WHERE login = '${login}';`;
     db.query(sqlDelete, (err, result) => {
         console.log(result)
@@ -215,6 +235,7 @@ app.put('/api/login/:login', (req, res) => {
 // Endpoint para apagar um pavimento
 app.put('/api/delpav/:pavimento/:obra', (req, res) => {
     const { pavimento , obra } = req.params;
+    console.log('Requisição para apagar pavimento ' + pavimento + ' da obra ' + obra)
     const sqlDelete = `DELETE FROM pavimentos WHERE nome_pavimento = '${pavimento}' AND obra = '${obra}';`;
     db.query(sqlDelete, (err, result) => {
         if (err) {
@@ -225,7 +246,7 @@ app.put('/api/delpav/:pavimento/:obra', (req, res) => {
             console.log('pavimento não encontrado');
             return res.status(404).json({ message: 'pavimento não encontrado' });
         }
-        console.log('Usuario deletado com sucesso!');
+        console.log('pavimento deletado com sucesso!');
         res.json({ message: 'pavimento deletado com sucesso!' });
     });
 });
@@ -233,6 +254,7 @@ app.put('/api/delpav/:pavimento/:obra', (req, res) => {
 //altera os dados de um pavimento
 app.put('/api/altpav/:pavimento/:obra', (req, res) => {
     const { pavimento , obra } = req.params;
+    console.log('Requisição para alterar os dados do pavimento ' + pavimento)
     const { novo_pavimento,nova_data } = req.body;
     const sqlUpdate = `UPDATE pavimentos SET nome_pavimento = '${novo_pavimento}', data_prev = '${nova_data}' WHERE nome_pavimento = '${pavimento}' AND obra = '${obra}';`;
     db.query(sqlUpdate, (err, result) => {
@@ -244,7 +266,7 @@ app.put('/api/altpav/:pavimento/:obra', (req, res) => {
             console.log('pavimento não encontrado');
             return res.status(404).json({ message: 'pavimento não encontrado' });
         }
-        console.log('Usuario alterado com sucesso!');
+        console.log('pavimento alterado com sucesso!');
         res.json({ message: 'pavimento alterado com sucesso!' });
     });
 });
@@ -254,6 +276,7 @@ app.put('/api/altpav/:pavimento/:obra', (req, res) => {
 // Endpoint para adicionar um usuario
 app.put('/api/addlogin/:nome', (req, res) => {
     const { nome,email,senha } = req.body;
+    console.log('Requisição para adicionar o usuario ' + nome)
     const sqlDelete = `INSERT INTO usuarios(nome,login,senha) VALUES ('${nome}','${email}','${senha}');`;
     db.query(sqlDelete, (err, result) => {
         if (err) {
@@ -272,6 +295,7 @@ app.put('/api/addlogin/:nome', (req, res) => {
 // Endpoint para alterar um usuario
 app.put('/api/altlogin/:login', (req, res) => {
     const { login } = req.params;
+    console.log('Requisição para alterar dados do usuario do email ' + login)
     const { nome,email,senha } = req.body;
     const sqlUpdate = `UPDATE usuarios SET nome = '${nome}', login = '${email}', senha = '${senha}' WHERE login = '${login}';`;
     db.query(sqlUpdate, (err, result) => {
@@ -290,9 +314,9 @@ app.put('/api/altlogin/:login', (req, res) => {
 
 
 // Endpoint para inserir pavimento novo
-// Endpoint para inserir dados na tabela pavimentos
 app.post('/api/pavimentos', (req, res) => {
     const { obra_nome, nome_pavimento, data_prev } = req.body;
+    console.log('Requisição para inserir novo pavimento na obra ' + obra_nome)
     // Verificar se todos os campos necessários foram fornecidos
     if (!obra_nome || !nome_pavimento || !data_prev) {
         return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
@@ -313,6 +337,7 @@ app.post('/api/pavimentos', (req, res) => {
             }
             // Se a inserção foi bem-sucedida, enviar uma mensagem de sucesso
         res.status(201).json({ message: 'Dados inseridos com sucesso na tabela pavimentos e desativados demais pavimentos' });
+        console.log('Dados inseridos com sucesso na tabela pavimentos e desativados demais pavimentos')
         });
     });
 });

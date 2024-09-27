@@ -99,7 +99,7 @@
     </a>
     
  
-    <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
+    <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo..." onkeyup="filterTable()">
 
     <table class="table table-striped">
         <thead class="thead-light">
@@ -267,7 +267,7 @@
                 </a>   
             </div>
             <div class="modal-body">
-                <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar...">
+                <input type="text" id="filterInputPav" class="form-control mb-3" placeholder="Filtrar..." oninput="filterTablePav()">
                 <div style="max-height: 340px; overflow-y: auto;">
                     <table class="table table-striped" id="tabelaPavimentosGeraisHead" style="width: 100%; table-layout: fixed;">
                         <thead>
@@ -398,9 +398,12 @@
                 <button type="button" class="close" onclick="toggleModal('modal_add_galeria')">&times;</button>
             </div>
             <div class="modal-body">
-                <form action="/upload" method="post" enctype="multipart/form-data">
-                    <input type="file" name="imagem" accept="image/*" capture="camera">
-                    <button type="button" onclick="enviar_foto(document.getElementById('modalGallery').getAttribute('nome_obra'))">Enviar</button>
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <!-- Botão para selecionar arquivo -->
+                    <button type="button" onclick="document.getElementById('fileInput').click();">Selecionar Arquivo</button>
+                    <input type="file" id="fileInput" name="imagem" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                    <!-- Botão para abrir a câmera -->
+                    <button type="button" onclick="openCamera()">Abrir Câmera</button>
                 </form>
             </div>
         </div>
@@ -528,6 +531,12 @@
             garfo: document.getElementById('garfo').value,
             laje: document.getElementById('laje').value,
         };
+        for (const key in obra) {
+            if (obra[key] == "") {
+                alert(`O campo ${key.replace('_', ' ')} deve ser preenchido.`);
+                return; // Sai da função se algum campo estiver vazio
+            }
+        }
         fetch('http://localhost:3000/api/dados', {
             method: 'POST',
             headers: {
@@ -608,6 +617,12 @@
             garfo : document.getElementById('editGarfo').value,
             laje : document.getElementById('editLaje').value
         };
+        for (const key in obra) {
+            if (obra[key] === "") {
+                alert(`O campo ${key.replace('_', ' ')} deve ser preenchido.`);
+                return; // Sai da função se algum campo estiver vazio
+            }
+        }
         console.log('nome obra: ' + nome_obra_original);  // Para depuração
         fetch(`http://localhost:3000/api/dados/${encodeURIComponent(nome_obra_original)}`, {  // Certifique-se de codificar o nome_obra
             method: 'PUT',
@@ -662,31 +677,48 @@
 
     //atualiza as fotos do modal de galeria
     function atualiza_modal_galeria(nome_obra) {
-            console.log('Tabela geral de imagens sendo atualizada...')
-            const div_galeria = document.getElementById('galeriaId')
-            div_galeria.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
-            fetch(`http://localhost:3000/api/getimage/${nome_obra}`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach((imagem, index) => {
-                    const img = document.createElement('img');
-                    img.src = `${imagem.caminho}`
-                    img.onclick = function() {
-                        // Ao clicar, mostra o modal e define a imagem expandida
-                        document.getElementById('imagemExpandida').src = img.src;
-                        document.getElementById('modalImagem').style.display = 'block';
-                    };
-                    img.style.width = '150px';
-                    img.style.height = '100px';
-                    img.style.marginLeft = '10px';
-                    img.style.marginTop = '10px';
-                    img.style.marginBottom = '10px';
-                    img.style.marginRight = '10px';
-                    img.style.borderRadius = '10px';
-                    img.style.objectFit = 'cover'; // Para manter a proporção e cortar se necessário
-                    div_galeria.appendChild(img);
-                })})
+        console.log('Tabela geral de imagens sendo atualizada...')
+        const div_galeria = document.getElementById('galeriaId')
+        div_galeria.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+        fetch(`http://localhost:3000/api/getimage/${nome_obra}`)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach((imagem, index) => {
+                const img = document.createElement('img');
+                img.src = `${imagem.caminho}`
+                img.onclick = function() {
+                    // Ao clicar, mostra o modal e define a imagem expandida
+                    document.getElementById('imagemExpandida').src = img.src;
+                    document.getElementById('modalImagem').style.display = 'block';
+                };
+                img.style.width = '150px';
+                img.style.height = '100px';
+                img.style.marginLeft = '10px';
+                img.style.marginTop = '10px';
+                img.style.marginBottom = '10px';
+                img.style.marginRight = '10px';
+                img.style.borderRadius = '10px';
+                img.style.objectFit = 'cover'; // Para manter a proporção e cortar se necessário
+                div_galeria.appendChild(img);
+            })})
+    }
+
+    //Quando um arquivo é selecionado, essa função é chamada. Ela verifica se um arquivo foi escolhido e, se sim, chama a função enviar_foto
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            enviar_foto(document.getElementById('modalGallery').getAttribute('nome_obra'));
+        } else {
+            alert('Nenhum arquivo selecionado.');
         }
+    }
+
+    //Essa função ajusta o atributo capture do input para abrir a câmera diretamente. Quando o botão "Abrir Câmera" é clicado, ele simula um clique no input.
+    function openCamera() {
+        const fileInput = document.getElementById('fileInput');
+        fileInput.setAttribute('capture', 'camera'); // Habilita a captura de câmera
+        fileInput.click(); // Simula um clique no input
+    }
 
     //envia imagem para o servidor
     function enviar_foto(nome_obra) {
@@ -697,6 +729,12 @@
         // Verifica se um arquivo foi selecionado
         if (!file) {
             alert('Selecione um arquivo.');
+            return;
+        }
+        // Validação do tipo de arquivo
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (!validTypes.includes(file.type)) {
+            alert('Apenas arquivos JPG, PNG e GIF são permitidos.');
             return;
         }
         // Adiciona o arquivo e o nome da obra ao FormData
@@ -735,6 +773,12 @@
             nome_pavimento: document.getElementById('nomePavimento').value,
             data_prev: document.getElementById('dataPavimento').value
         };
+        for (const key in pavimento) {
+            if (obra[key] === "") {
+                alert(`O campo ${key.replace('_', ' ')} deve ser preenchido.`);
+                return; // Sai da função se algum campo estiver vazio
+            }
+        }
         fetch('http://localhost:3000/api/pavimentos', {
             method: 'POST',
             headers: {
@@ -865,6 +909,7 @@
         }
     }
 
+    //'''revisar'''
     function atualizarCor(index, campo, cor) {
         obras[index][campo] = cor; // Atualiza a cor da obra no campo especificado
         localStorage.setItem('obras', JSON.stringify(obras)); // Salva no localStorage
@@ -872,12 +917,14 @@
         displayObras(); // Atualiza a tabela
     }
 
+    //'''revisar'''
     function mostrarCores(index, tipoCampo) {
         const select = document.getElementById(`selectCor${tipoCampo}${index}`);
         select.style.display = 'block';
         select.focus(); // Foca no dropdown
     }
 
+    //'''revisar'''
     function mostrarTexto(index, tipoCampo, cor) {
         const texto = document.getElementById(`corTexto${tipoCampo}${index}`);
         texto.innerText = cor; // Atualiza o texto com a cor selecionada
@@ -898,6 +945,7 @@
         modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
     }
 
+    //filtra a tabela de obras
     document.getElementById('filterInput').addEventListener('input', function() {
         const filter = this.value.toLowerCase();
         const rows = tabelaObras.getElementsByTagName('tr');
@@ -914,19 +962,24 @@
         }
     });
 
-    let sortDirection = {}; // Armazena a direção de classificação para cada coluna
-
-    function sortTable(colIndex) {
-        sortDirection[colIndex] = !sortDirection[colIndex]; // Alterna a direção
-        obras.sort((a, b) => {
-            const aValue = Object.values(a)[colIndex];
-            const bValue = Object.values(b)[colIndex];
-            return (aValue < bValue ? -1 : 1) * (sortDirection[colIndex] ? 1 : -1);
-        });
-        localStorage.setItem('obras', JSON.stringify(obras));
-        displayObras();
+    //filtrar a tabela de pavimentos gerais
+    function filterTablePav() {
+        const filter = document.getElementById('filterInputPav').value.toLowerCase();
+        const rows = document.getElementById('tabelaPavimentosGerais').getElementsByTagName('tr');
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                    found = true;
+                    break;
+                }
+            }
+            rows[i].style.display = found ? '' : 'none'; // Exibe ou oculta a linha
+        }
     }
 
+    //formata data vinda do bd para dd/mm/YYYY
     function formatDateBR(date) {
         const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
         return date.toLocaleDateString('pt-BR', options);

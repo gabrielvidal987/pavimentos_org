@@ -49,7 +49,7 @@
         </a>
     </div>
     
-    <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por nome...">
+    <input type="text" id="filter" class="form-control mb-3" placeholder="Filtrar por nome...">
 
     <table class="table table-striped">
         <thead class="thead-light">
@@ -59,7 +59,7 @@
                 <th>Ações</th>
             </tr>
         </thead>
-        <tbody id="tabelaUsuarios">
+        <tbody id="tabelaUsuarios" id="tabelaUser">
             <!-- Dados cadastrados serão exibidos aqui -->
         </tbody>
     </table>
@@ -136,8 +136,7 @@
 </div>
 
 <script>
-    let usuarioEditandoIndex = -1;
-
+    const tabelaUser = document.getElementById('tabelaUser')
     //carrega tabela de usuarios
     function reload_table() {
         console.log('Tabela geral de usuários sendo atualizada...')
@@ -286,6 +285,25 @@
             return
         }
     }
+
+    document.getElementById('filter').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.getElementById('tabelaUsuarios').getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            rows[i].style.display = found ? '' : 'none'; // Exibe ou oculta a linha
+        }
+    });
 
     reload_table()
 </script>
