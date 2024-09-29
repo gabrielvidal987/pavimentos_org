@@ -69,6 +69,7 @@ app.get('/api/getimage/:nome_obra', (req, res) => {
 
 // Endpoint para obter os dados de todas as obras
 app.get('/api/dados', (req, res) => {
+    db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','Requisição para pegar os dados de todas as obras')`)
     console.log('Requisição para pegar os dados de todas as obras')
     db.query('SELECT o.insert_sys, o.data_insert, o.projetista, o.nome_obra, o.endereco, o.torre, p.data_prev AS data_concreto, p.nome_pavimento AS pavimento_ativo, o.pilar, o.cor_pilar, o.grade, o.cor_grade, o.viga, o.cor_viga, o.garfo, o.cor_garfo, o.laje, o.cor_laje, o.primeiro_contato_nome,o.primeiro_contato_tel, o.segundo_contato_nome, o.segundo_contato_tel, o.terceiro_contato_nome, o.terceiro_contato_tel FROM obras o LEFT JOIN pavimentos p ON o.nome_obra = p.obra AND p.ativo = 1 WHERE o.obra_ativa = 1;', (err, results) => {
         if (err) throw err;
