@@ -70,7 +70,7 @@ app.get('/api/getimage/:nome_obra', (req, res) => {
 // Endpoint para obter os dados de todas as obras
 app.get('/api/dados', (req, res) => {
     console.log('Requisição para pegar os dados de todas as obras')
-    db.query('SELECT o.insert_sys, o.data_insert, o.projetista, o.nome_obra, o.endereco, o.torre, p.data_prev AS data_concreto, p.nome_pavimento AS pavimento_ativo, o.pilar, o.cor_pilar, o.grade, o.cor_grade, o.viga, o.cor_viga, o.garfo, o.cor_garfo, o.laje, o.cor_laje FROM obras o LEFT JOIN pavimentos p ON o.nome_obra = p.obra AND p.ativo = 1;', (err, results) => {
+    db.query('SELECT o.insert_sys, o.data_insert, o.projetista, o.nome_obra, o.endereco, o.torre, p.data_prev AS data_concreto, p.nome_pavimento AS pavimento_ativo, o.pilar, o.cor_pilar, o.grade, o.cor_grade, o.viga, o.cor_viga, o.garfo, o.cor_garfo, o.laje, o.cor_laje, o.primeiro_contato_nome,o.primeiro_contato_tel, o.segundo_contato_nome, o.segundo_contato_tel, o.terceiro_contato_nome, o.terceiro_contato_tel FROM obras o LEFT JOIN pavimentos p ON o.nome_obra = p.obra AND p.ativo = 1 WHERE o.obra_ativa = 1;', (err, results) => {
         if (err) throw err;
         res.json(results);
         console.log('Retornado os dados de todas as obras')
@@ -136,11 +136,11 @@ app.get('/api/dados/:nome_obra', (req, res) => {
 
 // Endpoint para inserir dados de nova obra / inserir nova obra
 app.post('/api/dados', (req, res) => {
-    const { projetista, nome_obra, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje } = req.body;
+    const { projetista, nome_obra, primeiro_contato_nome, primeiro_contato_tel , endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje } = req.body;
     console.log('Requisição para inserir dados de uma nova obra. nome da obra: ' + nome_obra)
     // Primeiro INSERT na tabela obras
-    const sqlObras = 'INSERT INTO obras (projetista, nome_obra, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const valuesObras = [projetista, nome_obra, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje];
+    const sqlObras = 'INSERT INTO obras (projetista, nome_obra, primeiro_contato_nome, primeiro_contato_tel , endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const valuesObras = [projetista, nome_obra, primeiro_contato_nome, primeiro_contato_tel ,  endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje];
     db.query(sqlObras, valuesObras, (err, result) => {
         if (err) {
             console.error(err);
@@ -188,16 +188,56 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-
-// Endpoint para atualizar dados usando nome_obra como identificador
+// Endpoint para atualizar dados de uma obra usando nome_obra como identificador
 app.put('/api/dados/:nome_obra', (req, res) => {
     const { nome_obra } = req.params;
     console.log('Requisição para atualizar/alterar dados da obra ' + nome_obra)
-    const { projetista, nome_obra_novo, endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje } = req.body;
+    const { projetista,primeiro_contato_nome,primeiro_contato_tel, segundo_contato_nome,segundo_contato_tel,terceiro_contato_nome,terceiro_contato_tel, endereco, torre, data_concreto, pavimento_ativo, pilar, grade, viga, garfo, laje, } = req.body;
     console.log('Atualizando obra:', nome_obra);  // Para verificar o nome_obra recebido
-    const sqlUpdate = `UPDATE obras SET projetista = ?, nome_obra = ?, endereco = ?, torre = ?, data_concreto = ?, pavimento_ativo = ?, pilar = ?, cor_pilar = ?, grade = ?, cor_grade = ?, viga = ?, cor_viga = ?, garfo = ?, cor_garfo = ?, laje = ?, cor_laje = ? WHERE nome_obra = ?`;
-    const valuesUpdate = [projetista, nome_obra_novo , endereco, torre, data_concreto, pavimento_ativo, pilar, cor_pilar, grade, cor_grade, viga, cor_viga, garfo, cor_garfo, laje, cor_laje, nome_obra];
-    db.query(sqlUpdate, valuesUpdate, (err, result) => {
+    const sqlUpdate = `UPDATE obras SET projetista = '${projetista}', primeiro_contato_nome = '${primeiro_contato_nome}',primeiro_contato_tel = '${primeiro_contato_tel}', segundo_contato_nome = '${segundo_contato_nome}',segundo_contato_tel = '${segundo_contato_tel}', terceiro_contato_nome = '${terceiro_contato_nome}',terceiro_contato_tel = '${terceiro_contato_tel}', endereco = '${endereco}', torre = '${torre}', data_concreto = '${data_concreto}', pavimento_ativo = '${pavimento_ativo}', pilar = '${pilar}', grade = '${grade}', viga = '${viga}', garfo = '${garfo}', laje = '${laje}' WHERE nome_obra = '${nome_obra}'`;
+    db.query(sqlUpdate, (err, result) => {
+        if (err) {
+            console.error('Erro no banco de dados:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar dados na tabela de obras' });
+        }
+        
+        if (result.affectedRows === 0) {
+            console.log('Obra não encontrada:', nome_obra);
+            return res.status(404).json({ message: 'Obra não encontrada para atualizar' });
+        }
+        console.log('Obra atualizada com sucesso');
+        res.json({ message: 'Dados atualizados com sucesso' });
+    });
+});
+
+// Endpoint para Finalizar uma obra
+app.put('/api/finalizarobra/:nome_obra', (req, res) => {
+    const { nome_obra } = req.params;
+    console.log('Requisição para finalizar obra ' + nome_obra)
+    const sqlUpdate = `UPDATE obras SET obra_ativa = 0 WHERE nome_obra = '${nome_obra}'`;
+    db.query(sqlUpdate, (err, result) => {
+        if (err) {
+            console.error('Erro no banco de dados:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar dados na tabela de obras' });
+        }
+        
+        if (result.affectedRows === 0) {
+            console.log('Obra não encontrada:', nome_obra);
+            return res.status(404).json({ message: 'Obra não encontrada para finalizar' });
+        }
+        console.log('Obra finalizada com sucesso, PARABENS!');
+        res.json({ message: 'Obra finalizada com sucesso, PARABENS' });
+    });
+});
+
+// Endpoint para atualizar cor do campo determinado com a cor determinada
+app.put('/api/cores/:nome_obra', (req, res) => {
+    const { nome_obra } = req.params;
+    console.log('Requisição para atualizar/alterar cores da obra ' + nome_obra)
+    const { columnCor, corSelecionada} = req.body;
+    console.log(`Atualizando coluna ${columnCor} com a cor ${corSelecionada} obra da obra: ${nome_obra}`);  // Para verificar o nome_obra recebido
+    const sqlUpdate = `UPDATE obras SET ${columnCor} = '${corSelecionada}' WHERE nome_obra = '${nome_obra}'`;
+    db.query(sqlUpdate, (err, result) => {
         if (err) {
             console.error('Erro no banco de dados:', err);
             return res.status(500).json({ error: 'Erro ao atualizar dados na tabela de obras' });

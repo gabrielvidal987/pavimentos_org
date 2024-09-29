@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: obras_lajes
 -- ------------------------------------------------------
--- Server version	8.0.36
+-- Server version	8.0.37
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -30,7 +30,7 @@ CREATE TABLE `pavimentos` (
   `data_prev` datetime DEFAULT NULL,
   `ativo` int DEFAULT '1',
   PRIMARY KEY (`insert_sys`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ CREATE TABLE `pavimentos` (
 
 LOCK TABLES `pavimentos` WRITE;
 /*!40000 ALTER TABLE `pavimentos` DISABLE KEYS */;
-INSERT INTO `pavimentos` VALUES (17,'2024-09-24 12:13:23','teste1','teste1','2023-09-25 00:00:00',0),(18,'2024-09-24 12:13:49','teste2','teste2','2004-12-15 00:00:00',1),(19,'2024-09-24 12:14:06','teste33','teste33','2012-12-12 00:00:00',1),(20,'2024-09-24 12:21:11','teste1','teste2 do 1','2024-09-24 00:00:00',0),(21,'2024-09-24 12:43:50','teste4','teste4','2024-09-24 00:00:00',1),(22,'2024-09-24 12:53:36','teste1','teste3 do 1','2004-02-01 00:00:00',0),(32,'2024-09-25 14:13:09','teste1','teste4 do 1','2012-12-12 00:00:00',0),(40,'2024-09-26 00:28:58','teste1','teste5 do 1','2024-02-02 00:00:00',0),(41,'2024-09-26 00:31:06','teste1','teste6 do 1','2024-01-01 00:00:00',1);
+INSERT INTO `pavimentos` VALUES (17,'2024-09-24 12:13:23','teste1','teste1','2023-09-25 00:00:00',0),(18,'2024-09-24 12:13:49','teste2','teste2','2004-12-15 00:00:00',1),(19,'2024-09-24 12:14:06','teste33','teste33','2012-12-12 00:00:00',1),(20,'2024-09-24 12:21:11','teste1','teste2 do 1','2024-09-24 00:00:00',0),(21,'2024-09-24 12:43:50','teste4','teste4','2024-09-24 00:00:00',1),(22,'2024-09-24 12:53:36','teste1','teste3 do 1','2004-02-01 00:00:00',0),(32,'2024-09-25 14:13:09','teste1','teste4 do 1','2012-12-12 00:00:00',0),(40,'2024-09-26 00:28:58','teste1','teste5 do 1','2024-02-02 00:00:00',0),(41,'2024-09-26 00:31:06','teste1','teste6 do 1','2024-01-01 00:00:00',1),(42,'2024-09-29 17:50:57','teste5','teste5','2024-01-01 00:00:00',1);
 /*!40000 ALTER TABLE `pavimentos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-26 14:25:02
+-- Dump completed on 2024-09-29 19:03:24

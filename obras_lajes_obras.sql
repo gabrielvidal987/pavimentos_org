@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: obras_lajes
 -- ------------------------------------------------------
--- Server version	8.0.36
+-- Server version	8.0.37
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -41,8 +41,15 @@ CREATE TABLE `obras` (
   `cor_garfo` char(50) DEFAULT NULL,
   `laje` char(50) DEFAULT NULL,
   `cor_laje` char(50) DEFAULT NULL,
+  `primeiro_contato_nome` varchar(100) DEFAULT NULL,
+  `primeiro_contato_tel` varchar(20) DEFAULT NULL,
+  `segundo_contato_nome` varchar(100) DEFAULT NULL,
+  `segundo_contato_tel` varchar(20) DEFAULT NULL,
+  `terceiro_contato_nome` varchar(100) DEFAULT NULL,
+  `terceiro_contato_tel` varchar(20) DEFAULT NULL,
+  `obra_ativa` int DEFAULT '1',
   PRIMARY KEY (`insert_sys`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -51,7 +58,7 @@ CREATE TABLE `obras` (
 
 LOCK TABLES `obras` WRITE;
 /*!40000 ALTER TABLE `obras` DISABLE KEYS */;
-INSERT INTO `obras` VALUES (18,'2024-09-24 12:13:23','Anderson','teste1','teste1','teste1','2023-09-25 00:00:00','teste1','teste1',NULL,'teste1',NULL,'teste1',NULL,'teste1',NULL,'teste1',NULL),(19,'2024-09-24 12:13:49','Edno','teste2','teste2','teste2','2004-12-15 00:00:00','teste2','teste2',NULL,'teste2',NULL,'teste2',NULL,'teste2',NULL,'teste2',NULL),(20,'2024-09-24 12:14:06','Tamara','teste33','teste33','teste33','2012-12-12 00:00:00','teste33','teste33',NULL,'teste33',NULL,'teste33',NULL,'teste33',NULL,'teste33',NULL),(21,'2024-09-24 12:43:50','Fabio','teste4','teste4','teste4','2024-09-24 00:00:00','teste4','teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL);
+INSERT INTO `obras` VALUES (18,'2024-09-24 12:13:23','Anderson','teste1','rua professor nicolau maria rossetti 12 b','teste1','2023-09-25 00:00:00','teste1','teste1','#0000ff','teste1','#00ff00','teste1','#00ff00','teste1','#ff0000','teste1','#00ff00','maria','11957362264','josea','11957362264','','',1),(19,'2024-09-24 12:13:49','Edno','teste2','teste2','teste2','2004-12-15 00:00:00','teste2','teste2',NULL,'teste2',NULL,'teste2',NULL,'teste2',NULL,'teste2',NULL,'','','','','','',1),(20,'2024-09-24 12:14:06','Tamara','teste33','teste33','teste33','2012-12-12 00:00:00','teste33','teste33',NULL,'teste33','#00ff00','teste33',NULL,'teste33',NULL,'teste33',NULL,'maria','11957362264','josea','11957362264','joao','11957362264',1),(21,'2024-09-24 12:43:50','Fabio','teste4','teste4','teste4','2024-09-24 00:00:00','teste4','teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL,'teste41','teste41','teste42','teste42','teste43','teste43',1),(22,'2024-09-29 17:50:57','Vitor','teste5','rua dulce carneiro','teste5','2024-01-01 00:00:00','teste5','teste5',NULL,'teste5',NULL,'teste5',NULL,'teste5',NULL,'teste5',NULL,NULL,NULL,NULL,NULL,NULL,NULL,0);
 /*!40000 ALTER TABLE `obras` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -64,4 +71,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-26 14:25:02
+-- Dump completed on 2024-09-29 19:03:24
