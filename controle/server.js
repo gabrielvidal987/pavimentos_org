@@ -7,10 +7,12 @@ const app = express();
 const PORT = 3000;
 
 // Configuração da conexão com o banco de dados
+//id publico da maquina host 191.252.222.67[mysql@e2664dc9455e /]$ 
+
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'user2',
-    password: 'Vid@l9871',
+    host: '191.252.222.67',
+    user: 'root',
+    password: '92185081abc',
     database: 'obras_lajes'
 });
 
