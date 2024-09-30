@@ -58,7 +58,7 @@ CREATE TABLE `obras` (
 
 LOCK TABLES `obras` WRITE;
 /*!40000 ALTER TABLE `obras` DISABLE KEYS */;
-INSERT INTO `obras` VALUES (18,'2024-09-24 12:13:23','Anderson','teste1','rua professor nicolau maria rossetti 12 b','teste1','2023-09-25 00:00:00','teste1','teste1','#0000ff','teste1','#00ff00','teste1','#00ff00','teste1','#ff0000','teste1','#00ff00','maria','11957362264','josea','11957362264','','',1),(19,'2024-09-24 12:13:49','Edno','teste2','teste2','teste2','2004-12-15 00:00:00','teste2','teste2',NULL,'teste2',NULL,'teste2',NULL,'teste2',NULL,'teste2',NULL,'','','','','','',1),(20,'2024-09-24 12:14:06','Tamara','teste33','teste33','teste33','2012-12-12 00:00:00','teste33','teste33',NULL,'teste33','#00ff00','teste33',NULL,'teste33',NULL,'teste33',NULL,'maria','11957362264','josea','11957362264','joao','11957362264',1),(21,'2024-09-24 12:43:50','Fabio','teste4','teste4','teste4','2024-09-24 00:00:00','teste4','teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL,'teste41','teste41','teste42','teste42','teste43','teste43',1),(22,'2024-09-29 17:50:57','Vitor','teste5','rua dulce carneiro','teste5','2024-01-01 00:00:00','teste5','teste5',NULL,'teste5',NULL,'teste5',NULL,'teste5',NULL,'teste5',NULL,NULL,NULL,NULL,NULL,NULL,NULL,0);
+INSERT INTO `obras` VALUES (18,'2024-09-24 12:13:23','Anderson','teste1','rua professor nicolau maria rossetti 12 b','teste1','2023-09-25 00:00:00','teste1','teste1','#0000ff','teste1','#00ff00','teste1','#00ff00','teste1','#ff0000','teste1','#00ff00','maria','11957362264','josea','11957362264','','',1),(19,'2024-09-24 12:13:49','Edno','teste2','teste2','teste2','2004-12-15 00:00:00','teste2','teste2',NULL,'teste2',NULL,'teste2','#ff0000','teste2',NULL,'teste2',NULL,'','','','','','',1),(20,'2024-09-24 12:14:06','Tamara','teste33','teste33','teste33','2012-12-12 00:00:00','teste33','teste33',NULL,'teste33','#00ff00','teste33',NULL,'teste33',NULL,'teste33',NULL,'maria','11957362264','josea','11957362264','joao','11957362264',1),(21,'2024-09-24 12:43:50','Fabio','teste4','teste4','teste4','2024-09-24 00:00:00','teste4','teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL,'teste4',NULL,'teste41','teste41','teste42','teste42','teste43','teste43',1),(22,'2024-09-29 17:50:57','Vitor','teste5','rua dulce carneiro','teste5','2024-01-01 00:00:00','teste5','teste5',NULL,'teste5',NULL,'teste5',NULL,'teste5',NULL,'teste5',NULL,NULL,NULL,NULL,NULL,NULL,NULL,0);
 /*!40000 ALTER TABLE `obras` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -71,4 +71,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-29 19:03:24
+-- Dump completed on 2024-09-29 22:55:28
