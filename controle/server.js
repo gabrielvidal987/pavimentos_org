@@ -397,9 +397,9 @@ app.post('/api/pavimentos', (req, res) => {
     });
 });
 
-// Endpoint para receber logs do servidor //acesso --> http://localhost:3000/api/logeventos or  http://192.168.1.8:3000/api/logeventos
+// Endpoint para receber logs do servidor //acesso --> http://localhost:3000/api/logeventos or  http://ipPCHOST:3000/api/logeventos
 app.get('/api/logeventos', (req, res) => {
-    db.query('SELECT * FROM log_eventos ORDER BY hora_evento DESC LIMIT 5;', (err, results) => {
+    db.query('SELECT * FROM log_eventos ORDER BY log_id DESC LIMIT 5;', (err, results) => {
         if (err) throw err;
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(results, null, 2));
