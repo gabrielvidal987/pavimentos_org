@@ -1,0 +1,15 @@
+instrucoes para colocar o node no servidor do locaweb e levar arquivos por putty
+após instalar o node:
+comando para passar um arquivo (nesse caso uma pasta toda) para o servidor que o putty ta conectado:
+pscp -r C:\Users\SC11\Desktop\pavimentos_org root@191.252.222.67:~/
+Explicação do comando:
+-r: Copia a pasta recursivamente.
+C:\Users\SC11\Desktop\pavimentos_org: Caminho da pasta no seu computador.
+root@191.252.222.67:~/: Especifica que você está se conectando como root ao servidor com o IP 191.252.222.67 e que deseja colocar a pasta na pasta home do usuário.
+Observação
+Quando você executar o comando, o pscp solicitará a senha. Insira A92185081abc@ quando solicitado.
+
+após isso é só ir no caminho no servidor, pelo putty usando
+ls : lista os arquivos na pasta atual
+cd ~~ : cd + espaço + <nome> acessa a pasta selecionada.
+faz o caminho completo e roda o node com server.js, o server.js deve estar com as portas configuradas corretamente para o docker do mysql
