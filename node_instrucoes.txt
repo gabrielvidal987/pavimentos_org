@@ -1,6 +1,6 @@
 instrucoes para colocar o node no servidor do locaweb e levar arquivos por putty
 após instalar o node:
-comando para passar um arquivo (nesse caso uma pasta toda) para o servidor que o putty ta conectado:
+comando para passar um arquivo (nesse caso uma pasta toda) para o servidor que o putty ta conectado (precisa ir para o caminho do pscp na pasta local do putty):
 pscp -r C:\Users\SC11\Desktop\pavimentos_org root@191.252.222.67:~/
 Explicação do comando:
 -r: Copia a pasta recursivamente.
