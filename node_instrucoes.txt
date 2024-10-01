@@ -16,3 +16,4 @@ faz o caminho completo e roda o node com server.js, o server.js deve estar com a
 após isso para acessar o servidor pode verificar o ip com curl ifconfig.me
 ficará o acesso com o ip publico + porta + caminhos defiinidos no codigo ---> http://191.252.222.67:3000/api/logeventos
 agora é só deixar os server rodando
+comandos para abrir o server no putty -> cd pavimentos_org/controle -> enter -> node server.js -> enter -> deve aparecer "servidor rodando na port 3000 \n conectado ao banco de dados!
