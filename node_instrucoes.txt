@@ -13,3 +13,6 @@ após isso é só ir no caminho no servidor, pelo putty usando
 ls : lista os arquivos na pasta atual
 cd ~~ : cd + espaço + <nome> acessa a pasta selecionada.
 faz o caminho completo e roda o node com server.js, o server.js deve estar com as portas configuradas corretamente para o docker do mysql
+após isso para acessar o servidor pode verificar o ip com curl ifconfig.me
+ficará o acesso com o ip publico + porta + caminhos defiinidos no codigo ---> http://191.252.222.67:3000/api/logeventos
+agora é só deixar os server rodando
