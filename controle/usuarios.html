@@ -137,12 +137,13 @@
 
 <script>
     const tabelaUser = document.getElementById('tabelaUser')
+    const urlServ = 'http://191.252.222.67:3000'
     //carrega tabela de usuarios
     function reload_table() {
         console.log('Tabela geral de usuários sendo atualizada...')
         const table = document.getElementById('tabelaUsuarios')
         table.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
-        fetch(`http://localhost:3000/api/usuarios`)
+        fetch(`${urlServ}/api/usuarios`)
         .then(response => response.json())
         .then(data => {
             data.forEach((usuario, index) => {
@@ -182,7 +183,7 @@
                 email : email,
                 senha : senha
             };
-            fetch(`http://localhost:3000/api/addlogin/${nome}`, {
+            fetch(`${urlServ}/api/addlogin/${nome}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -222,7 +223,7 @@
                 email : email,
                 senha : senha
             }
-            fetch(`http://localhost:3000/api/altlogin/${login}`, {
+            fetch(`${urlServ}/api/altlogin/${login}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -260,7 +261,7 @@
             var user = {
                 email : login
             };
-            fetch(`http://localhost:3000/api/login/${login}`, {
+            fetch(`${urlServ}/api/login/${login}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

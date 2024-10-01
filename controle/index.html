@@ -91,6 +91,7 @@
         </div>
     </div>
     <script>
+        const urlServ = 'http://191.252.222.67:3000'
         document.getElementById('username').value = "";
         document.getElementById('password').value = "";
         function validar_usuario() {
@@ -103,7 +104,7 @@
                 password : String(document.getElementById('password').value)
             }
             try {
-                fetch('http://localhost:3000/api/login', {
+                fetch(`${urlServ}/api/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

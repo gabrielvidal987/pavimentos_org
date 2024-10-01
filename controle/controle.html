@@ -471,6 +471,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script>
         const tabelaObras = document.getElementById('tabelaObras');
+        const urlServ = 'http://191.252.222.67:3000'
         // get no servidor node com os dados do select * from obras
         function reload_table() {
             const maxLength = 10; // Defina o número máximo de caracteres que deseja exibir
@@ -478,7 +479,7 @@
             console.log(`Iniciando reload_table()`);
             //LIMPA TABELA
             tabelaObras.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
-            fetch('http://localhost:3000/api/dados')
+            fetch(`${urlServ}/api/dados`)
             .then(response => response.json())
             .then(data => {
                 data.forEach((obra, index) => {
@@ -607,7 +608,7 @@
                     return; // Sai da função se algum campo estiver vazio
                 }
             }
-            fetch('http://localhost:3000/api/dados', {
+            fetch(`${urlServ}/api/dados`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -647,7 +648,7 @@
 
         //carregar no modal de update os dados da obra
         function loadEditObra(nome_obra) {
-            fetch(`http://localhost:3000/api/dados/${encodeURIComponent(nome_obra)}`)
+            fetch(`${urlServ}/api/dados/${encodeURIComponent(nome_obra)}`)
             .then(response => response.json())
             .then(data => {
                 // Função para ajustar a data ao formato yyyy-MM-ddTHH:mm
@@ -707,7 +708,7 @@
                 laje : document.getElementById('editLaje').value
             };
             console.log('nome obra: ' + nome_obra_original);  // Para depuração
-            fetch(`http://localhost:3000/api/dados/${encodeURIComponent(nome_obra_original)}`, {  // Certifique-se de codificar o nome_obra
+            fetch(`${urlServ}/api/dados/${encodeURIComponent(nome_obra_original)}`, {  // Certifique-se de codificar o nome_obra
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -745,7 +746,7 @@
                     nada : 'nada',
                 };
                 console.log('nome obra: ' + nome_obra_original);  // Para depuração
-                fetch(`http://localhost:3000/api/finalizarobra/${encodeURIComponent(nome_obra_original)}`, {  // Certifique-se de codificar o nome_obra
+                fetch(`${urlServ}/api/finalizarobra/${encodeURIComponent(nome_obra_original)}`, {  // Certifique-se de codificar o nome_obra
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -804,7 +805,7 @@
             console.log('Tabela geral de imagens sendo atualizada...')
             const div_galeria = document.getElementById('galeriaId')
             div_galeria.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
-            fetch(`http://localhost:3000/api/getimage/${nome_obra}`)
+            fetch(`${urlServ}/api/getimage/${nome_obra}`)
             .then(response => response.json())
             .then(data => {
                 data.forEach((imagem, index) => {
@@ -864,7 +865,7 @@
             // Adiciona o arquivo e o nome da obra ao FormData
             formData.append('imagem', file);
             formData.append('obra', nome_obra);
-            fetch('http://localhost:3000/api/upload', {
+            fetch(`${urlServ}/api/upload`, {
                 method: 'POST',
                 body: formData,  // Envia o FormData com o arquivo e nome da obra
             })
@@ -903,7 +904,7 @@
                     return; // Sai da função se algum campo estiver vazio
                 }
             }
-            fetch('http://localhost:3000/api/pavimentos', {
+            fetch(`${urlServ}/api/pavimentos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -935,7 +936,7 @@
             document.getElementById('modalPavimentosGerais').setAttribute('nome_obra', obra_nome);
             const table = document.getElementById('tabelaPavimentosGerais')
             table.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
-            fetch(`http://localhost:3000/api/pavimentos/${obra_nome}`)
+            fetch(`${urlServ}/api/pavimentos/${obra_nome}`)
             .then(response => response.json())
             .then(data => {
                 data.forEach((pavimento, index) => {
@@ -971,7 +972,7 @@
                     novo_pavimento : novo_pavimento,
                     nova_data : nova_data
                 };
-                fetch(`http://localhost:3000/api/altpav/${pavimento}/${obra}`, {
+                fetch(`${urlServ}/api/altpav/${pavimento}/${obra}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1007,7 +1008,7 @@
                 var user = {
                     nada : 'nada'
                 };
-                fetch(`http://localhost:3000/api/delpav/${pavimento}/${obra}`, {
+                fetch(`${urlServ}/api/delpav/${pavimento}/${obra}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1042,7 +1043,7 @@
                 corSelecionada : corSelecionada
             };
             console.log('nome obra: ' + nome_obra);  // Para depuração
-            fetch(`http://localhost:3000/api/cores/${encodeURIComponent(nome_obra)}`, {  // Certifique-se de codificar o nome_obra
+            fetch(`${urlServ}/api/cores/${encodeURIComponent(nome_obra)}`, {  // Certifique-se de codificar o nome_obra
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1147,7 +1148,7 @@
         //gera a planilha
         function gera_planilha() {
             console.log(`Iniciando gera_planilha()`);
-            fetch('http://localhost:3000/api/dados')
+            fetch(`${urlServ}/api/dados`)
             .then(response => response.json())
             .then(data => {
                 // Cria uma nova planilha

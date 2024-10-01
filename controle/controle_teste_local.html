@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Obras</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f7f9fc;
+        }
+        h2 {
+            color: #333;
+        }
+        .modal-content {
+            animation: slideIn 0.4s;
+        }
+        @keyframes slideIn {
+            from {transform: translateY(-20%); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+        th {
+            cursor: pointer;
+            white-space: nowrap; /* Evita a quebra de linha nos títulos da tabela */
+        }
+        td {
+            white-space: nowrap; /* Evita a quebra de linha no conteúdo da tabela */
+            text-transform: uppercase;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modalPav {
+            display: none;
+            position: fixed;
+            /* z-index: 1000; */
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%); /* Centraliza o modal na tela */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-dialog {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+        .pavimentos {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        input[type="color"] {
+            width: none;
+            height: none;
+            padding: 0;
+            border: none;
+            background: none;
+        }
+        .icon-container {
+            position: absolute;
+            right: 635px;
+            top: 35px;
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 95%;margin-left: 2em;margin-top: 2em;">
+        <h2 class="text-center">Controle de Obras</h2>
+        
+        <button class="btn btn-primary mb-3" onclick="toggleModal('modalObra')">
+        <i class="fa-sharp fa-solid fa-building"></i>
+        </button>
+        <button class="btn btn-primary mb-3" onclick="window.location.href = 'usuarios.html';" title="Manutenção de Usuários">
+            <i class="fas fa-users-cog"></i>
+        </button>
+        <button class="btn btn-primary mb-3" onclick="gera_planilha()">
+            <i class="fa-solid fa-file-excel"></i>
+        </button>
+        <!-- Ícone de sair do sistema -->
+        <a href="index.html" class="btn btn-danger" title="Sair do Sistema" style="float: right; margin-left: auto;">
+        <i class="fas fa-sign-out-alt"></i> Sair
+        </a>
+        <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
+        <table class="table table-striped" style="font-size: 12px;">
+            <thead class="thead-light">
+                <tr>
+                    <th style="text-align: center;">Projetista</th>
+                    <th style="text-align: center;">Nome da Obra</th>
+                    <th style="text-align: center;">Endereço</th>
+                    <th style="text-align: center;">Torre</th>
+                    <th style="text-align: center;">Data do Concreto</th>
+                    <th style="text-align: center;">Pavimento Ativo</th>
+                    <th style="text-align: center;">Pilar</th>
+                    <th style="text-align: center;">Grade</th>
+                    <th style="text-align: center;">Viga</th>
+                    <th style="text-align: center;">Garfo</th>
+                    <th style="text-align: center;">Laje</th>
+                    <th style="text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaObras">
+                <!-- Dados cadastrados serão exibidos aqui -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal para adicionar obra -->
+    <div id="modalObra" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 600px; top: -30%;border-radius: 10px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cadastrar Obra</h5>
+                <button type="button" class="close" onclick="toggleModal('modalObra')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="obraForm">
+                    <div class="form-group">
+                        <label for="projetista">Projetista</label>
+                        <select id="projetista" class="form-control" required>
+                            <option value="">Selecione o Projetista</option>
+                            <option value="Alan">Alan</option>
+                            <option value="Anderson">Anderson</option>
+                            <option value="Edno">Edno</option>
+                            <option value="Emilio">Emilio</option>
+                            <option value="Fabio">Fabio</option>
+                            <option value="Tamara">Tamara</option>
+                            <option value="Vitor">Vitor</option>
+                            <option value="Yolanda">Yolanda</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nomeObra">Nome da Obra</label>
+                        <input type="text" id="nomeObra" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="primeiro_contato_nome">Nome do primeiro Contato</label>
+                        <input type="text" id="primeiro_contato_nome" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="primeiro_contato_tel">Telefone do primeiro Contato</label>
+                        <input type="text" id="primeiro_contato_tel" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="enderecoObra">Endereço</label>
+                        <input type="text" id="enderecoObra" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="torre">Torre</label>
+                        <input type="text" id="torre" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataConcreto">Data do Concreto</label>
+                        <input type="date" id="dataConcreto" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pavimentoAtivo">Pavimento Ativo</label>
+                        <input type="text" id="pavimentoAtivo" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pilar">Pilar</label>
+                        <input type="text" id="pilar" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="grade">Grade</label>
+                        <input type="text" id="grade" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="viga">Viga</label>
+                        <input type="text" id="viga" class="form-control" required>
+                    </div>                 
+                    <div class="form-group">
+                        <label for="garfo">Garfo</label>
+                        <input type="text" id="garfo" class="form-control" required>
+                    </div>                                         
+                    <div class="form-group">
+                        <label for="laje">Laje</label>
+                        <input type="text" id="laje" class="form-control" required>
+                    </div>                                         
+                </form>
+            </div>
+            <div class="modal-footer">
+                
+                <button type="submit" class="btn btn-primary" form="obraForm" onclick="insert_bd_obra()">
+                    <i class="fas fa-save"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal para adicionar pavimento -->
+    <div id="modalPavimento" class="modal" style="z-index: 1050;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Pavimento</h5>
+                <button type="button" class="close" onclick="toggleModal('modalPavimento')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="pavimentoForm">
+                    <div class="form-group">
+                        <label for="nomePavimento">Nome do Pavimento</label>
+                        <input type="text" id="nomePavimento" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataPavimento">Data</label>
+                        <input type="date" id="dataPavimento" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" onclick="add_pavimento()">
+                        <i class="fas fa-save"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal para trocar cor -->
+    <div id="modalEditCor" class="modal" style="z-index: 1000;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Troca cor</h5>
+                    <button type="button" class="close" onclick="toggleModal('modalEditCor')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped" id="tabelaEditCorHead" style="width: 100%; table-layout: fixed;">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Pilar</th>
+                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Grade</th>
+                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Viga</th>
+                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Garfo</th>
+                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Laje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaEditCorBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar pavimento -->
+    <div id="modalEditPavimento" class="modal" style="z-index: 1050;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Pavimento</h5>
+                <button type="button" class="close" onclick="toggleModal('modalEditPavimento')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editPavimentoForm">
+                    <div class="form-group">
+                        <label for="editNomePavimento">Nome do Pavimento</label>
+                        <input type="text" id="editNomePavimento" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDataPavimento">Data</label>
+                        <input type="date" id="editDataPavimento" class="form-control" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="altera_pavimento()">
+                        <i class="fas fa-save"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal para visualizar todos os pavimentos -->
+    <div id="modalPavimentosGerais" class="modal" style="width: 1250px; top: 5%;left: 3%;height: 550px; border-radius: 10px;overflow: hidden">
+        <div style="width: 1200px;margin-left: 25px;margin-top: 25px;height: 500px; border-radius: 10px;background-color: #f7f9fc;" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="margin-left: 16em;">Pavimentos da obra</h3>
+                    <button class="btn btn-primary" onclick="abrir_modal_add_pavimentos(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))" style="margin-left: 22em;">
+                        <i class="fas fa-plus"></i>
+                    </button>  
+                    <a type="button" class="btn btn-secondary" onclick="toggleModal('modalPavimentosGerais');reload_table();document.getElementById('tabelaPavimentosGerais').innerHTML = ''">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>   
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="filterInputPav" class="form-control mb-3" placeholder="Filtrar..." oninput="filterTablePav()">
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        <table class="table table-striped" id="tabelaPavimentosGeraisHead" style="width: 100%; table-layout: fixed;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nome</th>
+                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Data</th>
+                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ativo</th>
+                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaPavimentosGerais"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- <input type="text" id="observacoes_pavimentos" placeholder="Adicione aqui as observações sobre o pavimento" style="width: 90%;margin-left: 2em;"> -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar obra -->
+    <div id="modalEditObra" class="modal">
+    <div class="modal-dialog" style="max-width: 600px; top: -30%;border-radius: 10px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Obra</h5>
+                <button type="button" class="close" onclick="reload_table();toggleModal('modalEditObra')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editObraForm">
+                    <div class="form-group">
+                        <label for="editProjetista">Projetista</label>
+                        <select id="editProjetista" class="form-control" required>
+                            <option value="Alan">Alan</option>
+                            <option value="Anderson">Anderson</option>
+                            <option value="Edno">Edno</option>
+                            <option value="Emilio">Emilio</option>
+                            <option value="Fabio">Fabio</option>
+                            <option value="Tamara">Tamara</option>
+                            <option value="Vitor">Vitor</option>
+                            <option value="Yolanda">Yolanda</option>
+                        </select>
+                    </div>
+                    <!-- <div class="form-group">
+                        <label for="editNomeObra">Nome da Obra</label>
+                        <input type="text" id="editNomeObra" class="form-control" required>
+                    </div> -->
+                    <div class="form-group">
+                        <label for="editprimeiro_contato_nome">Nome do primeiro contato</label>
+                        <input type="text" id="editprimeiro_contato_nome" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editprimeiro_contato_tel">Telefone do primeiro contato</label>
+                        <input type="text" id="editprimeiro_contato_tel" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editsegundo_contato_nome">Nome do segundo contato</label>
+                        <input type="text" id="editsegundo_contato_nome" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editsegundo_contato_tel">Telefone do segundo contato</label>
+                        <input type="text" id="editsegundo_contato_tel" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editterceiro_contato_nome">Nome do terceiro contato</label>
+                        <input type="text" id="editterceiro_contato_nome" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editterceiro_contato_tel">Telefone do terceiro contato</label>
+                        <input type="text" id="editterceiro_contato_tel" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="editEnderecoObra">Endereço</label>
+                        <input type="text" id="editEnderecoObra" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTorre">Torre</label>
+                        <input type="text" id="editTorre" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDataConcreto">Data do Concreto</label>
+                        <input type="date" id="editDataConcreto" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPavimentoAtivo">Pavimento Ativo</label>
+                        <input type="text" id="editPavimentoAtivo" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPilar">Pilar</label>
+                        <input type="text" id="editPilar" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editGrade">Grade</label>
+                        <input type="text" id="editGrade" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editViga">Viga</label>
+                        <input type="text" id="editViga" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editGarfo">Garfo</label>
+                        <input type="text" id="editGarfo" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLaje">Laje</label>
+                        <input type="text" id="editLaje" class="form-control" required>
+                    </div>
+                    <div style="margin-top: 1em;"></div>
+                    <button type="submit" class="btn btn-primary" onclick="finalizar_obra()">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button type="submit" class="btn btn-primary" onclick="update_obra()">
+                        <i class="fas fa-save"></i>
+                    </button>                
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal para visualizar galeria -->
+    <div id="modalGallery" class="modal" style="width: 1250px; top: 5%;left: 3%;height: 550px; border-radius: 10px;overflow: hidden">
+        <div style="width: 1200px;margin-left: 25px;margin-top: 25px;height: 500px; border-radius: 10px;background-color: #f7f9fc;" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="margin-left: 16em;">Galeria da obra</h3>
+                    <button class="btn btn-primary" onclick="abrir_modal_add_image(document.getElementById('modalGallery').getAttribute('nome_obra'))" style="margin-left: 22em;">
+                        <i class="fas fa-plus"></i>
+                    </button>  
+                    <a type="button" class="btn btn-secondary" onclick="toggleModal('modalGallery');reload_table();document.getElementById('galeriaId').innerHTML = ''">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>   
+                </div>
+                <div class="container" id="galeriaId" style="max-width: 100%; max-height: 420px; overflow-y: auto; overflow-x: hidden;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para exibir a imagem em tela cheia -->
+    <div id="modalImagem" class="modal" style="width: 1250px; top: 5%;left: 3%;height: 550px; border-radius: 10px;overflow: hidden;z-index: 1050;">
+        <div class="modal-dialo" style="width: 1170px;margin-left: 40px;margin-top: 35px;height: 480px; border-radius: 10px;background-color: #ffffff;" >
+            <div class="modal-content" >
+                <a type="button" class="btn btn-secondary" onclick="toggleModal('modalImagem')" style="margin: 10px; width: 35px;">
+                    <i class="fas fa-arrow-left"></i>
+                </a>   
+                <img id="imagemExpandida" src="" style="width: 1110px; height: auto;margin: 30px;"/>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar imagem na galeria -->
+    <div id="modal_add_galeria" class="modal" style="z-index: 1050;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Adicionar Imagens</h5>
+                    <button type="button" class="close" onclick="toggleModal('modal_add_galeria')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <!-- Botão para selecionar arquivo -->
+                        <button type="button" onclick="document.getElementById('fileInput').click();">Selecionar Arquivo</button>
+                        <input type="file" id="fileInput" name="imagem" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                        <!-- Botão para abrir a câmera -->
+                        <button type="button" onclick="openCamera()">Abrir Câmera</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script>
+        const tabelaObras = document.getElementById('tabelaObras');
+        const urlServ = 'http://localhost:3000'
+        // get no servidor node com os dados do select * from obras
+        function reload_table() {
+            const maxLength = 10; // Defina o número máximo de caracteres que deseja exibir
+            tabelaObras.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+            console.log(`Iniciando reload_table()`);
+            //LIMPA TABELA
+            tabelaObras.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+            fetch(`${urlServ}/api/dados`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach((obra, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                    <td>${limitarTexto(obra.projetista, maxLength)}</td>
+                    <td style="cursor: pointer;" onclick="mostrarDiv(${index})">
+                        <span style="color: black">${limitarTexto(obra.nome_obra, maxLength)}</span>
+                        <div id="div_contact1${index}" style="display: none;">
+                            ${obra.primeiro_contato_nome && obra.primeiro_contato_tel ? `${obra.primeiro_contato_nome} ${obra.primeiro_contato_tel}` : 'sem contato'}
+                        </div>
+                        <div id="div_contact2${index}" style="display: none;">
+                            ${obra.segundo_contato_nome && obra.segundo_contato_tel ? `${obra.segundo_contato_nome} ${obra.segundo_contato_tel}` : 'sem contato'}
+                        </div>
+                        <div id="div_contact3${index}" style="display: none;">
+                            ${obra.terceiro_contato_nome && obra.terceiro_contato_tel ? `${obra.terceiro_contato_nome} ${obra.terceiro_contato_tel}` : 'sem contato'}
+                        </div>
+                    </td>
+                    <td><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(obra.endereco)}" target="_blank">${limitarTexto(obra.endereco, maxLength)}</a></td>
+                    <td>${limitarTexto(obra.torre, maxLength)}</td>
+                    <td>${formatDateBR(new Date(obra.data_concreto))}</td>
+                    <td>${limitarTexto(obra.pavimento_ativo, maxLength)}</td>
+
+                    <!-- Coluna Pilar -->
+                    <td style="background-color: ${obra.cor_pilar}; cursor: pointer;" onclick="mostrarCores(${index}, 'Pilar')">
+                        <span style="font-weight: bold;color: black">${limitarTexto(obra.pilar, maxLength)}</span>
+                        <select id="selectCorPilar${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_pilar',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Branco</option>
+                            <option value="#ffff00">Amarelo</option>
+                            <option value="#ff0000">Vermelho</option>
+                            <option value="#00ff00">Verde</option>
+                            <option value="#0000ff">Azul</option>
+                        </select>
+                    </td>
+
+                    <!-- Coluna Grade -->
+                    <td style="background-color: ${obra.cor_grade}; cursor: pointer;" onclick="mostrarCores(${index}, 'Grade')">
+                        <span style="font-weight: bold;color: black;">${limitarTexto(obra.grade, maxLength)}</span>
+                        <select id="selectCorGrade${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_grade',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Branco</option>
+                            <option value="#ffff00">Amarelo</option>
+                            <option value="#ff0000">Vermelho</option>
+                            <option value="#00ff00">Verde</option>
+                            <option value="#0000ff">Azul</option>
+                        </select>
+                    </td>
+
+                    <!-- Coluna Viga -->
+                    <td style="background-color: ${obra.cor_viga}; cursor: pointer;" onclick="mostrarCores(${index}, 'Viga')">
+                        <span style="font-weight: bold;color: black">${limitarTexto(obra.viga, maxLength)}</span>
+                        <select id="selectCorViga${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_viga',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Branco</option>
+                            <option value="#ffff00">Amarelo</option>
+                            <option value="#ff0000">Vermelho</option>
+                            <option value="#00ff00">Verde</option>
+                            <option value="#0000ff">Azul</option>
+                        </select>
+                    </td>
+
+                    <!-- Coluna Garfo -->
+                    <td style="background-color: ${obra.cor_garfo}; cursor: pointer;" onclick="mostrarCores(${index}, 'Garfo')">
+                        <span style="font-weight: bold;color: black">${limitarTexto(obra.garfo, maxLength)}</span>
+                        <select id="selectCorGarfo${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_garfo',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Branco</option>
+                            <option value="#ffff00">Amarelo</option>
+                            <option value="#ff0000">Vermelho</option>
+                            <option value="#00ff00">Verde</option>
+                            <option value="#0000ff">Azul</option>
+                        </select>
+                    </td>
+
+                    <!-- Coluna Laje -->
+                    <td style="background-color: ${obra.cor_laje}; cursor: pointer;" onclick="mostrarCores(${index}, 'Laje')">
+                        <span style="font-weight: bold;color: black">${limitarTexto(obra.laje, maxLength)}</span>
+                        <select id="selectCorLaje${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_laje',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Branco</option>
+                            <option value="#ffff00">Amarelo</option>
+                            <option value="#ff0000">Vermelho</option>
+                            <option value="#00ff00">Verde</option>
+                            <option value="#0000ff">Azul</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="abrir_modal_add_pavimentos('${obra.nome_obra}')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="atualiza_modal_pavimentos_geral('${obra.nome_obra}');toggleModal('modalPavimentosGerais')">
+                            <i class="fas fa-list"></i>
+                        </button>
+                        <button class="btn btn-info btn-sm" onclick="loadEditObra('${obra.nome_obra}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-info btn-sm" onclick="abrir_modal_gallery('${obra.nome_obra}')">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </td>
+                `;
+                tabelaObras.appendChild(row); // Adiciona a linha à tabela
+            })})
+            .catch(error => console.error('Erro:', error));
+            console.log(`Finalizado reload_table()`);
+        }
+
+        //enviar post para insert no banco de dados
+        function insert_bd_obra() {
+            event.preventDefault();
+            console.log(`Iniciando insert_bd_obra()`);
+            var obra = {
+                projetista: document.getElementById('projetista').value,
+                nome_obra: document.getElementById('nomeObra').value,
+                primeiro_contato_nome : document.getElementById('primeiro_contato_nome').value,
+                primeiro_contato_tel: document.getElementById('primeiro_contato_tel').value,
+                endereco: document.getElementById('enderecoObra').value,
+                torre: document.getElementById('torre').value,
+                data_concreto: document.getElementById('dataConcreto').value,
+                pavimento_ativo: document.getElementById('pavimentoAtivo').value,
+                pilar: document.getElementById('pilar').value,
+                grade: document.getElementById('grade').value,
+                viga: document.getElementById('viga').value,
+                garfo: document.getElementById('garfo').value,
+                laje: document.getElementById('laje').value,
+            };
+            for (const key in obra) {
+                if (obra[key] == "") {
+                    alert(`O campo ${key.replace('_', ' ')} deve ser preenchido.`);
+                    return; // Sai da função se algum campo estiver vazio
+                }
+            }
+            fetch(`${urlServ}/api/dados`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(obra),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao inserir dados: ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert(data.message);
+                reload_table();
+            })
+            .catch((error) => {
+                alert(error);
+                });
+            console.log(`Finalizado insert_bd_obra()`);
+            //limpa modal
+            document.getElementById('projetista').value = ''
+            document.getElementById('nomeObra').value = ''
+            document.getElementById('enderecoObra').value = ''
+            document.getElementById('torre').value = ''
+            document.getElementById('dataConcreto').value = ''
+            document.getElementById('pavimentoAtivo').value = ''
+            document.getElementById('pilar').value = ''
+            document.getElementById('grade').value = ''
+            document.getElementById('viga').value = ''
+            document.getElementById('garfo').value = ''
+            document.getElementById('laje').value = ''
+            //fecha modal e recarrega tabela
+            toggleModal('modalObra');
+            reload_table();
+        }
+
+        //carregar no modal de update os dados da obra
+        function loadEditObra(nome_obra) {
+            fetch(`${urlServ}/api/dados/${encodeURIComponent(nome_obra)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Função para ajustar a data ao formato yyyy-MM-ddTHH:mm
+                function formatDateForInput(dateString) {
+                    const date = new Date(dateString);
+                    return date.toISOString().slice(0, 10); // Formata como yyyy-MM-dd
+                }
+                console.log(data[0])
+                document.getElementById('editProjetista').value = data[0].projetista;
+                // document.getElementById('editNomeObra').value = data[0].nome_obra;
+                document.getElementById('editprimeiro_contato_nome').value = data[0].primeiro_contato_nome || '';
+                document.getElementById('editprimeiro_contato_tel').value = data[0].primeiro_contato_tel || '';
+                document.getElementById('editsegundo_contato_nome').value = data[0].segundo_contato_nome || '';
+                document.getElementById('editsegundo_contato_tel').value = data[0].segundo_contato_tel || '';
+                document.getElementById('editterceiro_contato_nome').value = data[0].terceiro_contato_nome || '';
+                document.getElementById('editterceiro_contato_tel').value = data[0].terceiro_contato_tel || '';
+                document.getElementById('editEnderecoObra').value = data[0].endereco;
+                document.getElementById('editTorre').value = data[0].torre;
+                document.getElementById('editDataConcreto').value = formatDateForInput(data[0].data_concreto);
+                document.getElementById('editPavimentoAtivo').value = data[0].pavimento_ativo;
+                document.getElementById('editPilar').value = data[0].pilar;
+                document.getElementById('editGrade').value = data[0].grade;
+                document.getElementById('editViga').value = data[0].viga;
+                document.getElementById('editGarfo').value = data[0].garfo;
+                document.getElementById('editLaje').value = data[0].laje;
+                document.getElementById('modalEditObra').setAttribute('nome-obra-original', data[0].nome_obra);
+            })
+            .catch(error => {
+                alert('erro')
+                console.error('Erro:', error);
+            });
+            toggleModal('modalEditObra');
+        }
+
+        //enviar put para atualizar dados de obra ja existente
+        function update_obra() {
+            console.log('Iniciado update_obra()');  // Para depuração
+            event.preventDefault();
+            const nome_obra_original = document.getElementById('modalEditObra').getAttribute('nome-obra-original');
+            var obra = {
+                projetista : document.getElementById('editProjetista').value,
+                // nome_obra_novo : document.getElementById('editNomeObra').value,
+                primeiro_contato_nome : document.getElementById('editprimeiro_contato_nome').value || '',
+                primeiro_contato_tel : document.getElementById('editprimeiro_contato_tel').value || '',
+                segundo_contato_nome : document.getElementById('editsegundo_contato_nome').value || '',
+                segundo_contato_tel : document.getElementById('editsegundo_contato_tel').value || '',
+                terceiro_contato_nome : document.getElementById('editterceiro_contato_nome').value || '',
+                terceiro_contato_tel : document.getElementById('editterceiro_contato_tel').value || '',
+                endereco : document.getElementById('editEnderecoObra').value,
+                torre : document.getElementById('editTorre').value,
+                data_concreto : document.getElementById('editDataConcreto').value,
+                pavimento_ativo : document.getElementById('editPavimentoAtivo').value,
+                pilar : document.getElementById('editPilar').value,
+                grade : document.getElementById('editGrade').value,
+                viga : document.getElementById('editViga').value,
+                garfo : document.getElementById('editGarfo').value,
+                laje : document.getElementById('editLaje').value
+            };
+            console.log('nome obra: ' + nome_obra_original);  // Para depuração
+            fetch(`${urlServ}/api/dados/${encodeURIComponent(nome_obra_original)}`, {  // Certifique-se de codificar o nome_obra
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(obra),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao atualizar dados: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                reload_table();  // Recarrega a tabela após a atualização
+            })
+            .catch((error) => {
+                console.error('Erro:', error);  // Melhor usar console para debugar
+                alert(error.message);
+            });
+
+            console.log('Finalizado update_obra()');  // Para depuração
+            toggleModal('modalEditObra');
+            reload_table()
+        }
+
+        //enviar put para finalizar obra ja existente
+        function finalizar_obra() {
+            let result = confirm("Você tem certeza que deseja marcar a obra como concluida?");
+            if (result) {
+                console.log('Iniciado finalizar_obra()');  // Para depuração
+                event.preventDefault();
+                const nome_obra_original = document.getElementById('modalEditObra').getAttribute('nome-obra-original');
+                var obra = {
+                    nada : 'nada',
+                };
+                console.log('nome obra: ' + nome_obra_original);  // Para depuração
+                fetch(`${urlServ}/api/finalizarobra/${encodeURIComponent(nome_obra_original)}`, {  // Certifique-se de codificar o nome_obra
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(obra),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao atualizar dados: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    reload_table();  // Recarrega a tabela após a atualização
+                })
+                .catch((error) => {
+                    console.error('Erro:', error);  // Melhor usar console para debugar
+                    alert(error.message);
+                });
+
+                console.log('Finalizado update_obra()');  // Para depuração
+                toggleModal('modalEditObra');
+                reload_table()
+            } else {
+                console.log('cancelada operação de finalização de obra')
+            }
+        }
+        
+        //abre modal de adicionar pavimentos e atribui nome obra como atributo
+        function abrir_modal_add_pavimentos(nome_obra) {
+            var modalPavimento = document.getElementById('modalPavimento');
+            modalPavimento.setAttribute('nome_obra', nome_obra);
+            toggleModal('modalPavimento');
+        }
+
+        //abre modal de adicionar imagem na galeria e atribui nome obra como atributo
+        function abrir_modal_add_image(nome_obra) {
+            var modaAddImage = document.getElementById('modal_add_galeria');
+            modaAddImage.setAttribute('nome_obra', nome_obra);
+            toggleModal('modal_add_galeria');
+        }
+
+        //abre modal da galeria
+        function abrir_modal_gallery(nome_obra) {
+            console.log(nome_obra)
+            document.getElementById('galeriaId').innerHTML = ''
+            var modalGallery = document.getElementById('modalGallery');
+            modalGallery.setAttribute('nome_obra', nome_obra);
+            atualiza_modal_galeria(nome_obra)
+            toggleModal('modalGallery');
+        }
+
+        //atualiza as fotos do modal de galeria
+        function atualiza_modal_galeria(nome_obra) {
+            console.log('Tabela geral de imagens sendo atualizada...')
+            const div_galeria = document.getElementById('galeriaId')
+            div_galeria.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+            fetch(`${urlServ}/api/getimage/${nome_obra}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach((imagem, index) => {
+                    const img = document.createElement('img');
+                    img.src = `${imagem.caminho}`
+                    img.onclick = function() {
+                        // Ao clicar, mostra o modal e define a imagem expandida
+                        document.getElementById('imagemExpandida').src = img.src;
+                        document.getElementById('modalImagem').style.display = 'block';
+                    };
+                    img.style.width = '150px';
+                    img.style.height = '100px';
+                    img.style.marginLeft = '10px';
+                    img.style.marginTop = '10px';
+                    img.style.marginBottom = '10px';
+                    img.style.marginRight = '10px';
+                    img.style.borderRadius = '10px';
+                    img.style.objectFit = 'cover'; // Para manter a proporção e cortar se necessário
+                    div_galeria.appendChild(img);
+                })})
+        }
+
+        //Quando um arquivo é selecionado, essa função é chamada. Ela verifica se um arquivo foi escolhido e, se sim, chama a função enviar_foto
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                enviar_foto(document.getElementById('modalGallery').getAttribute('nome_obra'));
+            } else {
+                alert('Nenhum arquivo selecionado.');
+            }
+        }
+
+        //Essa função ajusta o atributo capture do input para abrir a câmera diretamente. Quando o botão "Abrir Câmera" é clicado, ele simula um clique no input.
+        function openCamera() {
+            const fileInput = document.getElementById('fileInput');
+            fileInput.setAttribute('capture', 'camera'); // Habilita a captura de câmera
+            fileInput.click(); // Simula um clique no input
+        }
+
+        //envia imagem para o servidor
+        function enviar_foto(nome_obra) {
+            console.log('Iniciado update da imagem');
+            const formData = new FormData();
+            const fileInput = document.querySelector('input[name="imagem"]');
+            const file = fileInput.files[0];
+            // Verifica se um arquivo foi selecionado
+            if (!file) {
+                alert('Selecione um arquivo.');
+                return;
+            }
+            // Validação do tipo de arquivo
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                alert('Apenas arquivos JPG, PNG e GIF são permitidos.');
+                return;
+            }
+            // Adiciona o arquivo e o nome da obra ao FormData
+            formData.append('imagem', file);
+            formData.append('obra', nome_obra);
+            fetch(`${urlServ}/api/upload`, {
+                method: 'POST',
+                body: formData,  // Envia o FormData com o arquivo e nome da obra
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao enviar imagem: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                fileInput.value = "";
+                atualiza_modal_galeria(nome_obra)
+                abrir_modal_add_image(document.getElementById('modalGallery').getAttribute('nome_obra'));
+            })
+            .catch((error) => {
+                console.error('Erro:', error);
+                alert(error.message);
+            });
+
+            console.log('finalizando update da imagem');
+        }
+
+        //adicionar pavimentos á obra
+        function add_pavimento() {
+            event.preventDefault();
+            console.log(`Iniciando insert_bd_obra()`);
+            var nome_obra = document.getElementById('modalPavimento').getAttribute('nome_obra');
+            var pavimento = {
+                obra_nome : nome_obra,
+                nome_pavimento: document.getElementById('nomePavimento').value,
+                data_prev: document.getElementById('dataPavimento').value
+            };
+            for (const key in pavimento) {
+                if (obra[key] === "") {
+                    alert(`O campo ${key.replace('_', ' ')} deve ser preenchido.`);
+                    return; // Sai da função se algum campo estiver vazio
+                }
+            }
+            fetch(`${urlServ}/api/pavimentos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(pavimento),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao inserir dados: ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert(data.message);
+                atualiza_modal_pavimentos_geral(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))
+            })
+            .catch((error) => {
+                alert(error);
+                });
+            console.log(`Finalizado insert_pavimento()`);
+            document.getElementById('pavimentoForm').reset();
+            toggleModal('modalPavimento');
+            
+        } //depois chama reload_table()
+
+        //adiciona no modal de pavimentos gerais os pavimentos daquela obra específica
+        function atualiza_modal_pavimentos_geral(obra_nome) {
+            console.log('Tabela geral de pavimentos sendo atualizada...')
+            document.getElementById('modalPavimentosGerais').setAttribute('nome_obra', obra_nome);
+            const table = document.getElementById('tabelaPavimentosGerais')
+            table.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+            fetch(`${urlServ}/api/pavimentos/${obra_nome}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach((pavimento, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${pavimento.nome_pavimento}</td>
+                        <td>${pavimento.data_prev}</td>
+                        <td>${pavimento.ativo}</td>
+                        <td>
+                            <button class="btn btn-info btn-sm" onclick="document.getElementById('modalEditPavimento').setAttribute('pavimento','${pavimento.nome_pavimento}');document.getElementById('modalEditPavimento').setAttribute('obra','${obra_nome}');toggleModal('modalEditPavimento')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleta_pavimento('${pavimento.nome_pavimento}','${obra_nome}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    table.appendChild(row);
+                })})
+            .catch(error => console.error('Erro:', error));
+            // falta fazer para puxar dados dos pavimentos daquela obra e colocar nessa table
+        }
+
+        //altera os dados do pavimento selecionado
+        function altera_pavimento() {
+            var pavimento = document.getElementById('modalEditPavimento').getAttribute('pavimento');
+            var obra = document.getElementById('modalEditPavimento').getAttribute('obra');
+            const novo_pavimento = document.getElementById('editNomePavimento').value;
+            const nova_data = document.getElementById('editDataPavimento').value;
+            if (novo_pavimento && nova_data) {
+                console.log(`Alterando pavimento ${pavimento}`);
+                var user = {
+                    novo_pavimento : novo_pavimento,
+                    nova_data : nova_data
+                };
+                fetch(`${urlServ}/api/altpav/${pavimento}/${obra}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(user),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao alterar pavimento: ' + response.statusText)
+                    }
+                    return response.json()
+                })
+                .then(data => {
+                    alert(data.message);
+                    atualiza_modal_pavimentos_geral(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))
+                    document.getElementById('editNomePavimento').value = "";
+                    document.getElementById('editDataPavimento').value = "";
+                    toggleModal('modalEditPavimento')
+                })
+                .catch((error) => {
+                    alert(error);
+                    });
+                console.log(`Finalizado alteração de pavimento`);
+            }
+            else {alert('Preencha os dados do pavimento')}
+        }
+
+        //deleta o pavimento especificado confirmando que o usuario deseja fazer isso
+        function deleta_pavimento(pavimento,obra) {
+            let result = confirm("Você tem certeza que deseja deletar o pavimento?");
+            if (result) {
+                console.log(`Deletando pavimento ${pavimento}`);
+                var user = {
+                    nada : 'nada'
+                };
+                fetch(`${urlServ}/api/delpav/${pavimento}/${obra}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(user),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao apagar pavimento: ' + response.statusText)
+                    }
+                    return response.json()
+                })
+                .then(data => {
+                    alert(data.message);
+                    atualiza_modal_pavimentos_geral(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))
+                })
+                .catch((error) => {
+                    alert(error);
+                    });
+                console.log(`Finalizado delet de pavimento`);
+            } else {
+                return
+            }
+        }
+
+        //atualiza a cor da coluna no bd e consequentemente na tela
+        function atualizarCor(nome_obra,columnCor,corSelecionada) {
+            console.log('Iniciado atualizarCor()');  // Para depuração
+            event.preventDefault();
+            var att_cor = {
+                columnCor : columnCor,
+                corSelecionada : corSelecionada
+            };
+            console.log('nome obra: ' + nome_obra);  // Para depuração
+            fetch(`${urlServ}/api/cores/${encodeURIComponent(nome_obra)}`, {  // Certifique-se de codificar o nome_obra
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(att_cor),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao atualizar dados: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                reload_table();  // Recarrega a tabela após a atualização
+            })
+            .catch((error) => {
+                console.error('Erro:', error);  // Melhor usar console para debugar
+                alert(error.message);
+            });
+            console.log('Finalizado atualizarCor()');  // Para depuração
+        }
+
+        //abre a selectbox de selecionar cor
+        function mostrarCores(index, tipoCampo) {
+            const select = document.getElementById(`selectCor${tipoCampo}${index}`);
+            select.style.display = 'block';
+            select.focus(); // Foca no dropdown
+        }
+
+        // Função para limitar o número de caracteres e adicionar reticências, se necessário
+        function limitarTexto(texto, limite) {
+            if (texto == "") {return texto;}
+            if (texto.length > limite) {
+                return texto.substring(0, limite) + '...'; // Limita e adiciona reticências
+            }
+            return texto; // Retorna o texto original se estiver dentro do limite
+        }
+
+        //exibe a div de contatos
+        function mostrarDiv(index) {
+            var contact1 = document.getElementById(`div_contact1${index}`);
+            var contact2 = document.getElementById(`div_contact2${index}`);
+            var contact3 = document.getElementById(`div_contact3${index}`);
+            // Verifica se a div está atualmente oculta
+            if (contact1.style.display === "none") {
+                contact1.style.display = "block"; // Mostra a div
+                contact2.style.display = "block"; // Mostra a div
+                contact3.style.display = "block"; // Mostra a div
+            } else {
+                contact1.style.display = "none"; // Oculta a div
+                contact2.style.display = "none"; // Oculta a div
+                contact3.style.display = "none"; // Oculta a div
+            }
+        }
+
+        // Abrir modal a partir do argumento. ex: modal para criar nova obra, modal para alterar dados obra etc
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+
+        //filtra a tabela de obras
+        document.getElementById('filterInput').addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            const rows = tabelaObras.getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let found = false;
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                        found = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = found ? '' : 'none';
+            }
+        });
+
+        //filtrar a tabela de pavimentos gerais
+        function filterTablePav() {
+            const filter = document.getElementById('filterInputPav').value.toLowerCase();
+            const rows = document.getElementById('tabelaPavimentosGerais').getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let found = false;
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                        found = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = found ? '' : 'none'; // Exibe ou oculta a linha
+            }
+        }
+
+        //formata data vinda do bd para dd/mm/YYYY
+        function formatDateBR(date) {
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            return date.toLocaleDateString('pt-BR', options);
+        }
+        
+        //gera a planilha
+        function gera_planilha() {
+            console.log(`Iniciando gera_planilha()`);
+            fetch(`${urlServ}/api/dados`)
+            .then(response => response.json())
+            .then(data => {
+                // Cria uma nova planilha
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Dados');
+                // Gera o arquivo Excel
+                XLSX.writeFile(wb, 'Dados_obras_gerais.xlsx');
+            })
+            .catch(error => console.error('Erro:', error));
+            console.log(`Finalizado gera_planilha()`);
+        }
+
+    reload_table()
+    </script>
+
+</body>
+</html>

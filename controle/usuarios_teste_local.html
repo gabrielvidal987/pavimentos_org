@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuários</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f7f9fc;
+        }
+        h2 {
+            color: #333;
+        }
+        .modal-content {
+            animation: slideIn 0.4s;
+        }
+        @keyframes slideIn {
+            from {transform: translateY(-20%); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+        th {
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        td {
+            white-space: nowrap;
+        }
+        .icon-container {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center">Cadastro de Usuários</h2>
+
+    <!-- Ícones para adicionar novo usuário e voltar à página principal -->
+    <div class="icon-container">
+        <a href="#" class="btn btn-primary" onclick="toggleModal('modalCadastro')" title="Adicionar Usuário">
+            <i class="fa-solid fa-user-plus"></i>
+        </a>
+        <a href="controle.html" class="btn btn-secondary" title="Voltar à Página Principal">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </div>
+    
+    <input type="text" id="filter" class="form-control mb-3" placeholder="Filtrar por nome...">
+
+    <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaUsuarios" id="tabelaUser">
+            <!-- Dados cadastrados serão exibidos aqui -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de Cadastro -->
+<div id="modalCadastro" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cadastrar Usuário</h5>
+                <button type="button" class="btn-close" onclick="toggleModal('modalCadastro')"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formUsuario">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="senha" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="senha" required>
+                    </div>
+                    <input type="hidden" id="usuarioIndex" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                
+              <button type="button" class="btn btn-primary" onclick="salvarUsuario()" title="Salvar Usuário">
+                <i class="fas fa-save"></i>
+              </button>            
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de alteração -->
+<div id="modalAltera" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Alterar Usuário</h5>
+                <button type="button" class="btn-close" onclick="toggleModal('modalAltera')"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formUsuario">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nomeEdit" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="emailEdit" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="senha" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="senhaEdit" required>
+                    </div>
+                    <input type="hidden" id="usuarioIndex" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                
+              <button type="button" class="btn btn-primary" onclick="editarUsuario(document.getElementById('modalAltera').getAttribute('login'))" title="Salvar Usuário">
+                <i class="fas fa-save"></i>
+              </button>            
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const tabelaUser = document.getElementById('tabelaUser')
+    const urlServ = 'http://localhost:3000'
+    //carrega tabela de usuarios
+    function reload_table() {
+        console.log('Tabela geral de usuários sendo atualizada...')
+        const table = document.getElementById('tabelaUsuarios')
+        table.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+        fetch(`${urlServ}/api/usuarios`)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach((usuario, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${usuario.nome}</td>
+                    <td>${usuario.login}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="document.getElementById('modalAltera').setAttribute('login','${usuario.login}');toggleModal('modalAltera')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="removerUsuario('${usuario.login}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                table.appendChild(row);
+            })})
+        .catch(error => console.error('Erro:', error));
+    }
+
+    //abre o modal especificado
+    function toggleModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = modal.style.display === "none" || modal.style.display === "" ? "block" : "none";
+    }
+
+    //cria usuario novo
+    function salvarUsuario() {
+        const nome = document.getElementById('nome').value;
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+        if (nome && email && senha) {
+            console.log(`Adicionando usuario ${nome}`);
+            var user = {
+                nome : nome,
+                email : email,
+                senha : senha
+            };
+            fetch(`${urlServ}/api/addlogin/${nome}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao adicionar dados: ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert(data.message);
+                reload_table();
+            })
+            .catch((error) => {
+                alert(error);
+                });
+            console.log(`Finalizado adição de usuario`);
+            toggleModal('modalCadastro');
+        }
+        else {
+            alert('Preencha todos os campos')
+        }
+    }
+
+    //edita um usuario ja existente
+    function editarUsuario(login) {
+        console.log('Alterando usuario')
+        const nome = document.getElementById('nomeEdit').value;
+        const email = document.getElementById('emailEdit').value;
+        const senha = document.getElementById('senhaEdit').value;
+        if (nome && email && senha) {
+            var dados = {
+                nome : nome,
+                email : email,
+                senha : senha
+            }
+            fetch(`${urlServ}/api/altlogin/${login}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dados),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao alterar dados: ' + response.statusText)
+                    }
+                    return response.json()
+                })
+                .then(data => {
+                    alert(data.message);
+                    reload_table();
+                    document.getElementById('nomeEdit').value = "";
+                    document.getElementById('emailEdit').value = "";
+                    document.getElementById('senhaEdit').value = "";
+                })
+                .catch((error) => {
+                    alert(error);
+                    });
+                console.log(`Finalizado alteração de usuario`);
+            toggleModal('modalAltera');
+        }
+        else { alert('Preencha todos os dados!') }
+        
+    }
+
+    //remove o usuario (nasce um confirm para confirmar se tem certeza da remoção)
+    function removerUsuario(login) {
+        let result = confirm("Você tem certeza que deseja deletar o usuario?");
+        if (result) {
+            console.log(`Deletando usuario ${login}`);
+            var user = {
+                email : login
+            };
+            fetch(`${urlServ}/api/login/${login}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao apagar dados: ' + response.statusText)
+                }
+                return response.json()
+            })
+            .then(data => {
+                alert(data.message);
+                reload_table();
+            })
+            .catch((error) => {
+                alert(error);
+                });
+            console.log(`Finalizado delet de usuario`);
+        } else {
+            return
+        }
+    }
+
+    document.getElementById('filter').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.getElementById('tabelaUsuarios').getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            rows[i].style.display = found ? '' : 'none'; // Exibe ou oculta a linha
+        }
+    });
+
+    reload_table()
+</script>
+</body>
+</html>
