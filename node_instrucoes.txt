@@ -30,3 +30,43 @@ após isso para acessar o servidor pode verificar o ip com curl ifconfig.me
 ficará o acesso com o ip publico + porta + caminhos defiinidos no codigo ---> http://191.252.222.67:3000/api/logeventos
 agora é só deixar os server rodando
 comandos para abrir o server no putty -> cd pavimentos_org/controle -> enter -> node server.js -> enter -> deve aparecer "servidor rodando na port 3000 \n conectado ao banco de dados!
+
+para deixar o server rodando direto pode instalar o pm2 (biblioteca do node):
+sudo apt-get install npm
+sudo npm install -g pm2
+
+Iniciar seu servidor com pm2:
+
+Navegue até o diretório onde está o seu server.js:
+cd /caminho/para/seu/diretorio
+
+Agora, inicie o seu servidor usando o pm2:
+pm2 start server.js
+
+Você pode verificar o status do seu servidor usando:
+pm2 status
+
+utilidades do pm2 > 
+Verificar o status do seu aplicativo
+pm2 status
+
+Manter o pm2 em execução após reinicialização
+pm2 startup
+
+Salvar a configuração atual do pm2
+pm2 save
+
+Listar processos:
+pm2 list
+
+Ver logs do seu aplicativo:
+pm2 logs
+
+Parar um aplicativo:
+pm2 stop server.js
+
+Reiniciar um aplicativo:
+pm2 restart server.js
+
+Remover um aplicativo:
+pm2 delete server.js
