@@ -1,0 +1,45 @@
+instrucoes para colocar o mysql no servidor do ubuntu e levar arquivos por putty
+-------------------------------------------------------
+para instalar o mysql no Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-105-generic x86_64):
+sudo apt update
+sudo apt upgrade
+sudo apt install mysql-server
+sudo systemctl status mysql
+sudo systemctl start mysql
+#configura o sql
+sudo mysql_secure_installation
+#alterar senha
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'NovaSenha';
+#criar database:
+create database teste;
+#visualizar databases:
+show databases;
+#selecionar database:
+use database teste;
+#criar tabela:
+create table coluna1(nome varchar(50), idade int primary key);
+#visualizar tabelas:
+show tables;
+#pegar detalhes de alguma tabela:
+describe coluna1;
+
+#coloca o sql para iniciar/dar boot com a maquina:
+sudo systemctl enable mysql
+
+--------------------------------------------------------
+após instalar o node:
+comando para passar um arquivo (nesse caso uma pasta toda) para o servidor que o putty ta conectado (precisa ir para o caminho do pscp na pasta local do putty):
+pscp -r C:\Users\SC11\Desktop\pavimentos_org root@191.252.222.67:~/
+Explicação do comando:
+-r: Copia a pasta recursivamente.
+C:\Users\SC11\Desktop\pavimentos_org: Caminho da pasta no seu computador.
+root@191.252.222.67:~/: Especifica que você está se conectando como root ao servidor com o IP 191.252.222.67 e que deseja colocar a pasta na pasta home do usuário.
+Observação
+Quando você executar o comando, o pscp solicitará a senha. Insira A92185081abc@ quando solicitado.
+
+após isso é só ir no caminho no servidor, pelo putty usando
+ls : lista os arquivos na pasta atual
+após isso para acessar o servidor pode verificar o ip com curl ifconfig.me
+ficará o acesso com o ip publico + porta + caminhos defiinidos no codigo ---> http://191.252.222.67:3000/api/logeventos
+agora é só deixar os server rodando
+comandos para abrir o server no putty -> cd pavimentos_org/controle -> enter -> node server.js -> enter -> deve aparecer "servidor rodando na port 3000 \n conectado ao banco de dados!

@@ -1,4 +1,17 @@
 instrucoes para colocar o node no servidor do locaweb e levar arquivos por putty
+-------------------------------------------------------
+para instalar o node no Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-105-generic x86_64):
+Usando o nvm (Node Version Manager)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+source ~/.bashrc
+nvm --version
+nvm install 20.17.0
+nvm use 20.17.0
+nvm alias default 20.17.0
+node -v
+
+
+--------------------------------------------------------
 após instalar o node:
 comando para passar um arquivo (nesse caso uma pasta toda) para o servidor que o putty ta conectado (precisa ir para o caminho do pscp na pasta local do putty):
 pscp -r C:\Users\SC11\Desktop\pavimentos_org root@191.252.222.67:~/
