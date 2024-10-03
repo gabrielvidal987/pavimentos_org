@@ -1,5 +1,68 @@
 instrucoes para colocar o mysql no servidor do ubuntu e levar arquivos por putty
 -------------------------------------------------------
+estrutura do banco de dados:
+database : obras_lajes
+
+CREATE TABLE galeria (
+    id_foto INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    caminho VARCHAR(255) DEFAULT NULL,
+    obra VARCHAR(100) DEFAULT NULL
+);
+
+CREATE TABLE log_eventos (
+    log_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    hora_evento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    funcao VARCHAR(100) DEFAULT NULL,
+    evento VARCHAR(200) DEFAULT NULL
+);
+
+CREATE TABLE obras (
+    insert_sys INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    data_insert DATETIME DEFAULT CURRENT_TIMESTAMP,
+    projetista VARCHAR(200) DEFAULT NULL,
+    nome_obra VARCHAR(200) DEFAULT NULL,
+    endereco VARCHAR(200) DEFAULT NULL,
+    torre CHAR(50) DEFAULT NULL,
+    data_concreto DATETIME DEFAULT NULL,
+    pavimento_ativo CHAR(50) DEFAULT NULL,
+    pilar CHAR(50) DEFAULT NULL,
+    cor_pilar CHAR(50) DEFAULT NULL,
+    grade CHAR(50) DEFAULT NULL,
+    cor_grade CHAR(50) DEFAULT NULL,
+    viga CHAR(50) DEFAULT NULL,
+    cor_viga CHAR(50) DEFAULT NULL,
+    garfo CHAR(50) DEFAULT NULL,
+    cor_garfo CHAR(50) DEFAULT NULL,
+    laje CHAR(50) DEFAULT NULL,
+    cor_laje CHAR(50) DEFAULT NULL,
+    primeiro_contato_nome VARCHAR(100) DEFAULT NULL,
+    primeiro_contato_tel VARCHAR(20) DEFAULT NULL,
+    segundo_contato_nome VARCHAR(100) DEFAULT NULL,
+    segundo_contato_tel VARCHAR(20) DEFAULT NULL,
+    terceiro_contato_nome VARCHAR(100) DEFAULT NULL,
+    terceiro_contato_tel VARCHAR(20) DEFAULT NULL,
+    obra_ativa INT DEFAULT 1
+);
+
+CREATE TABLE pavimentos (
+    insert_sys INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    data_insert DATETIME DEFAULT NULL,
+    obra VARCHAR(50) DEFAULT NULL,
+    nome_pavimento VARCHAR(50) DEFAULT NULL,
+    data_prev DATETIME DEFAULT NULL,
+    ativo INT DEFAULT NULL
+);
+
+CREATE TABLE usuarios (
+    insert_sys INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) DEFAULT NULL,
+    login VARCHAR(100) DEFAULT NULL,
+    senha VARCHAR(100) DEFAULT NULL,
+    ult_acesso DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-------------------------------------------------------
 para instalar o mysql no Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-105-generic x86_64):
 sudo apt update
 sudo apt upgrade
