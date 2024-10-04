@@ -604,7 +604,7 @@
             };
             for (const key in obra) {
                 if (obra[key] == "") {
-                    alert(`O campo ${key.replace('_', ' ')} deve ser preenchido.`);
+                    alert(`Todos os campos devem ser preenchidos.`);
                     return; // Sai da função se algum campo estiver vazio
                 }
             }
@@ -899,8 +899,8 @@
                 data_prev: document.getElementById('dataPavimento').value
             };
             for (const key in pavimento) {
-                if (obra[key] === "") {
-                    alert(`O campo ${key.replace('_', ' ')} deve ser preenchido.`);
+                if (pavimento[key] === "") {
+                    alert(`Todos os campos devem ser preenchidos`);
                     return; // Sai da função se algum campo estiver vazio
                 }
             }

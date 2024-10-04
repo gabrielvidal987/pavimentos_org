@@ -195,7 +195,7 @@
             </div>
             <div class="modal-footer">
                 
-                <button type="submit" class="btn btn-primary" form="obraForm" onclick="insert_bd_obra()">
+                <button type="button" class="btn btn-primary" form="obraForm" onclick="insert_bd_obra()">
                     <i class="fas fa-save"></i>
                 </button>
             </div>
@@ -221,7 +221,7 @@
                         <label for="dataPavimento">Data</label>
                         <input type="date" id="dataPavimento" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" onclick="add_pavimento()">
+                    <button type="button" class="btn btn-primary" onclick="add_pavimento()">
                         <i class="fas fa-save"></i>
                     </button>
                 </form>
@@ -405,10 +405,10 @@
                         <input type="text" id="editLaje" class="form-control" required>
                     </div>
                     <div style="margin-top: 1em;"></div>
-                    <button type="submit" class="btn btn-primary" onclick="finalizar_obra()">
+                    <button type="button" class="btn btn-primary" onclick="finalizar_obra()">
                         <i class="fas fa-check"></i>
                     </button>
-                    <button type="submit" class="btn btn-primary" onclick="update_obra()">
+                    <button type="button" class="btn btn-primary" onclick="update_obra()">
                         <i class="fas fa-save"></i>
                     </button>                
                 </form>
@@ -604,7 +604,7 @@
             };
             for (const key in obra) {
                 if (obra[key] == "") {
-                    alert(`O campo ${key.replace('_', ' ')} deve ser preenchido.`);
+                    alert(`Todos os campos devem ser preenchidos!!`);
                     return; // Sai da função se algum campo estiver vazio
                 }
             }
@@ -893,15 +893,16 @@
             event.preventDefault();
             console.log(`Iniciando insert_bd_obra()`);
             var nome_obra = document.getElementById('modalPavimento').getAttribute('nome_obra');
+            console.log(nome_obra)
             var pavimento = {
                 obra_nome : nome_obra,
                 nome_pavimento: document.getElementById('nomePavimento').value,
                 data_prev: document.getElementById('dataPavimento').value
             };
-            for (const key in pavimento) {
-                if (obra[key] === "") {
-                    alert(`O campo ${key.replace('_', ' ')} deve ser preenchido.`);
-                    return; // Sai da função se algum campo estiver vazio
+            for (var key in pavimento) {
+                if (pavimento[key] === '') {
+                    alert('Preencha todos os campos');
+                    return;
                 }
             }
             fetch(`${urlServ}/api/pavimentos`, {
