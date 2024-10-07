@@ -92,7 +92,7 @@ app.get('/api/dados', (req, res) => {
 // Endpoint para obter os dados de todos os usuários
 app.get('/api/usuarios', (req, res) => {
     db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','Requisição para pegar dados dos usuarios')`)
-    db.query('SELECT nome, login FROM usuarios ORDER BY nome;', (err, results) => {
+    db.query('SELECT nome, login, tipo_usuario FROM usuarios ORDER BY nome;', (err, results) => {
         if (err) throw err;
         res.json(results);
         db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','Retornados dados dos usuarios')`)
@@ -329,13 +329,11 @@ app.put('/api/altpav/:pavimento/:obra', (req, res) => {
     });
 });
 
-
-
 // Endpoint para adicionar um usuario
 app.put('/api/addlogin/:nome', (req, res) => {
-    const { nome,email,senha } = req.body;
+    const { nome,email,senha,tipo_usuario } = req.body;
     db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','Requisição para adicionar o usuario ${nome}')`);
-    const sqlDelete = `INSERT INTO usuarios(nome,login,senha) VALUES ('${nome}','${email}','${senha}');`;
+    const sqlDelete = `INSERT INTO usuarios(nome,login,senha,tipo_usuario) VALUES ('${nome}','${email}','${senha}','${tipo_usuario}');`;
     db.query(sqlDelete, (err, result) => {
         if (err) {
             console.error('Erro no banco de dados:', err);
@@ -355,8 +353,8 @@ app.put('/api/addlogin/:nome', (req, res) => {
 app.put('/api/altlogin/:login', (req, res) => {
     const { login } = req.params;
     db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','Requisição para alterar dados do usuario do email ${login}')`);
-    const { nome,email,senha } = req.body;
-    const sqlUpdate = `UPDATE usuarios SET nome = '${nome}', login = '${email}', senha = '${senha}' WHERE login = '${login}';`;
+    const { nome,email,senha,tipo_usuario } = req.body;
+    const sqlUpdate = `UPDATE usuarios SET nome = '${nome}', login = '${email}', senha = '${senha}', tipo_usuario = '${tipo_usuario}' tipo WHERE login = '${login}';`;
     db.query(sqlUpdate, (err, result) => {
         if (err) {
             console.error('Erro no banco de dados:', err);
@@ -390,7 +388,8 @@ app.post('/api/pavimentos', (req, res) => {
             db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','${err}')`);
             return res.status(500).json({ error: 'Erro ao inserir dados na tabela pavimentos' });
         }
-        const sqlPavimentosNotAtivo = `UPDATE pavimentos SET ativo = 0 WHERE obra = '${obra_nome}' AND data_prev != '${data_prev}';`
+        //comando para setar os demais pavimentos como 0 na coluna ativo
+        const sqlPavimentosNotAtivo = `UPDATE pavimentos SET ativo = 0 WHERE obra = '${obra_nome}' AND nome_pavimento != '${nome_pavimento}';`
         db.query(sqlPavimentosNotAtivo, valuesPavimentos, (err) => {
             if (err) {
                 console.error(err);

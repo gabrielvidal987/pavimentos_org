@@ -50,7 +50,7 @@ CREATE TABLE pavimentos (
     obra VARCHAR(50) DEFAULT NULL,
     nome_pavimento VARCHAR(50) DEFAULT NULL,
     data_prev DATETIME DEFAULT NULL,
-    ativo INT DEFAULT NULL
+    ativo INT DEFAULT 1
 );
 
 CREATE TABLE usuarios (
@@ -58,7 +58,8 @@ CREATE TABLE usuarios (
     nome VARCHAR(100) DEFAULT NULL,
     login VARCHAR(100) DEFAULT NULL,
     senha VARCHAR(100) DEFAULT NULL,
-    ult_acesso DATETIME DEFAULT CURRENT_TIMESTAMP
+    ult_acesso DATETIME DEFAULT CURRENT_TIMESTAMP,
+	tipo_usuario VARCHAR DEFAULT 'usuario'
 );
 
 

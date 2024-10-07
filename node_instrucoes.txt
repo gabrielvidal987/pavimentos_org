@@ -12,30 +12,35 @@ node -v
 
 
 --------------------------------------------------------
-após instalar o node:
-comando para passar um arquivo (nesse caso uma pasta toda) para o servidor que o putty ta conectado (precisa ir para o caminho do pscp na pasta local do putty):
-pscp -r C:\Users\SC11\Desktop\pavimentos_org root@191.252.222.67:~/
-Explicação do comando:
--r: Copia a pasta recursivamente.
-C:\Users\SC11\Desktop\pavimentos_org: Caminho da pasta no seu computador.
-root@191.252.222.67:~/: Especifica que você está se conectando como root ao servidor com o IP 191.252.222.67 e que deseja colocar a pasta na pasta home do usuário.
-Observação
-Quando você executar o comando, o pscp solicitará a senha. Insira A92185081abc@ quando solicitado.
+#após instalar o node:
 
-após isso é só ir no caminho no servidor, pelo putty usando
+#comando para passar um arquivo (nesse caso uma pasta toda) para o servidor que o putty ta conectado (precisa ir para o caminho do pscp na pasta local do putty):
+pscp -r C:\Users\SC11\Desktop\pavimentos_orgserv root@82.197.65.112:/home/root/
+
+**importante: para rodar o server é necessario o arquivo de server.js, os packages e os node_modules
+
+****Explicação do comando: *****
+-r: Indica que você está copiando recursivamente (útil para diretórios).
+C:\Users\SC11\Desktop\pavimentos_org: O caminho no seu computador local onde estão os arquivos que você deseja copiar.
+root@82.197.65.112: O usuário e o endereço IP do servidor remoto.
+:/home/root/: O diretório de destino no servidor remoto onde os arquivos serão copiados.
+****
+
+#após isso é só ir no caminho no servidor, pelo putty usando
 ls : lista os arquivos na pasta atual
 cd ~~ : cd + espaço + <nome> acessa a pasta selecionada.
 faz o caminho completo e roda o node com server.js, o server.js deve estar com as portas configuradas corretamente para o docker do mysql
 após isso para acessar o servidor pode verificar o ip com curl ifconfig.me
-ficará o acesso com o ip publico + porta + caminhos defiinidos no codigo ---> http://191.252.222.67:3000/api/logeventos
+ficará o acesso com o ip publico + porta + caminhos defiinidos no codigo ---> http://82.197.65.112:3000/api/logeventos
 agora é só deixar os server rodando
 comandos para abrir o server no putty -> cd pavimentos_org/controle -> enter -> node server.js -> enter -> deve aparecer "servidor rodando na port 3000 \n conectado ao banco de dados!
 
-para deixar o server rodando direto pode instalar o pm2 (biblioteca do node):
+**
+#para deixar o server rodando direto pode instalar o pm2 (biblioteca do node):
 sudo apt-get install npm
 sudo npm install -g pm2
 
-Iniciar seu servidor com pm2:
+#Iniciar seu servidor com pm2:
 
 Navegue até o diretório onde está o seu server.js:
 cd /caminho/para/seu/diretorio

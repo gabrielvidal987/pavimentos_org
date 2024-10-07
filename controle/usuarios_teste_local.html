@@ -57,6 +57,7 @@
                 <th>Nome</th>
                 <th>E-mail</th>
                 <th>Ações</th>
+                <th>Tipo</th>
             </tr>
         </thead>
         <tbody id="tabelaUsuarios" id="tabelaUser">
@@ -87,7 +88,13 @@
                         <label for="senha" class="form-label">Senha</label>
                         <input type="password" class="form-control" id="senha" required>
                     </div>
-                    <input type="hidden" id="usuarioIndex" value="">
+                    <div class="mb-3">
+                        <label for="tipo_usuario">Selecione o tipo de usuário:</label>
+                        <select id="tipo_usuario" name="tipo_usuario">
+                            <option value="administrador" selected>Administrador</option>
+                            <option value="usuario">Usuário</option>
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -111,18 +118,24 @@
             <div class="modal-body">
                 <form id="formUsuario">
                     <div class="mb-3">
-                        <label for="nome" class="form-label">Nome</label>
+                        <label for="nomeEdit" class="form-label">Nome</label>
                         <input type="text" class="form-control" id="nomeEdit" required>
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">E-mail</label>
+                        <label for="emailEdit" class="form-label">E-mail</label>
                         <input type="email" class="form-control" id="emailEdit" required>
                     </div>
                     <div class="mb-3">
-                        <label for="senha" class="form-label">Senha</label>
+                        <label for="senhaEdit" class="form-label">Senha</label>
                         <input type="password" class="form-control" id="senhaEdit" required>
                     </div>
-                    <input type="hidden" id="usuarioIndex" value="">
+                    <div class="mb-3">
+                        <label for="tipo_usuarioEdit">Selecione o tipo de usuário:</label>
+                        <select id="tipo_usuarioEdit" name="tipo_usuarioEdit">
+                            <option value="administrador">Administrador</option>
+                            <option value="usuario">Usuário</option>
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -152,13 +165,14 @@
                     <td>${usuario.nome}</td>
                     <td>${usuario.login}</td>
                     <td>
-                        <button class="btn btn-info btn-sm" onclick="document.getElementById('modalAltera').setAttribute('login','${usuario.login}');toggleModal('modalAltera')">
+                        <button class="btn btn-info btn-sm" onclick="document.getElementById('modalAltera').setAttribute('login','${usuario.login}');document.getElementById('nomeEdit').value = '${usuario.nome}';document.getElementById('emailEdit').value = '${usuario.login}';document.getElementById('tipo_usuarioEdit').value = '${usuario.tipo}';toggleModal('modalAltera')">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn btn-danger btn-sm" onclick="removerUsuario('${usuario.login}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
+                    <td>${usuario.tipo}</td>
                 `;
                 table.appendChild(row);
             })})
@@ -176,12 +190,14 @@
         const nome = document.getElementById('nome').value;
         const email = document.getElementById('email').value;
         const senha = document.getElementById('senha').value;
+        const tipo_usuario = document.getElementById('tipo_usuario').value;
         if (nome && email && senha) {
             console.log(`Adicionando usuario ${nome}`);
             var user = {
                 nome : nome,
                 email : email,
-                senha : senha
+                senha : senha,
+                tipo_usuario : tipo_usuario
             };
             fetch(`${urlServ}/api/addlogin/${nome}`, {
                 method: 'PUT',
@@ -217,11 +233,13 @@
         const nome = document.getElementById('nomeEdit').value;
         const email = document.getElementById('emailEdit').value;
         const senha = document.getElementById('senhaEdit').value;
+        const tipo_usuario = document.getElementById('tipo_usuarioEdit').value;
         if (nome && email && senha) {
             var dados = {
                 nome : nome,
                 email : email,
-                senha : senha
+                senha : senha,
+                tipo_usuario : tipo_usuario
             }
             fetch(`${urlServ}/api/altlogin/${login}`, {
                     method: 'PUT',
