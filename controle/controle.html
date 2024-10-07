@@ -96,6 +96,10 @@
         <i class="fas fa-sign-out-alt"></i> Sair
         </a>
         <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
+        <label>
+            <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas">
+            Mostrar apenas obras em andamento
+        </label><br>
         <table class="table table-striped" style="font-size: 12px;">
             <thead class="thead-light">
                 <tr>
@@ -483,6 +487,11 @@
             .then(response => response.json())
             .then(data => {
                 data.forEach((obra, index) => {
+                    if (document.getElementById('apenas_obras_ativas').checked) {
+                        if (obra.ativo == '0') {
+                            return; //ignora as obras com ativo = 0 ou seja inativas
+                        }
+                    }
                     const row = document.createElement('tr');
                     row.innerHTML = `
                     <td>${limitarTexto(obra.projetista, maxLength)}</td>
@@ -1121,6 +1130,11 @@
                 }
                 rows[i].style.display = found ? '' : 'none';
             }
+        });
+
+        //filtra a tabela de obras gerais
+        document.getElementById('apenas_obras_ativas').addEventListener('change', function() {
+            reload_table()
         });
 
         //filtrar a tabela de pavimentos gerais
