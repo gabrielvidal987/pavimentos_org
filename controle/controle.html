@@ -82,13 +82,13 @@
     <div style="width: 95%;margin-left: 2em;margin-top: 2em;">
         <h2 class="text-center">Controle de Obras</h2>
         
-        <button class="btn btn-primary mb-3" onclick="toggleModal('modalObra')">
+        <button class="btn btn-primary mb-3" onclick="toggleModal('modalObra')" id="btnModalObra">
         <i class="fa-sharp fa-solid fa-building"></i>
         </button>
-        <button class="btn btn-primary mb-3" onclick="window.location.href = 'usuarios.html';" title="Manutenção de Usuários">
+        <button class="btn btn-primary mb-3" onclick="window.location.href = 'usuarios.html';" title="Manutenção de Usuários" id="btnModalUsuarios">
             <i class="fas fa-users-cog"></i>
         </button>
-        <button class="btn btn-primary mb-3" onclick="gera_planilha()">
+        <button class="btn btn-primary mb-3" onclick="gera_planilha()" id="btnGeraPlanilha">
             <i class="fa-solid fa-file-excel"></i>
         </button>
         <!-- Ícone de sair do sistema -->
@@ -476,6 +476,10 @@
     <script>
         const tabelaObras = document.getElementById('tabelaObras');
         const urlServ = 'http://82.197.65.112:3000'
+        const usuario = localStorage.getItem('usuario');
+        const tipo_usuario = localStorage.getItem('tipo_usuario');
+        console.log(usuario)
+        console.log(tipo_usuario)
         // get no servidor node com os dados do select * from obras
         function reload_table() {
             const maxLength = 10; // Defina o número máximo de caracteres que deseja exibir
@@ -572,13 +576,13 @@
                         </select>
                     </td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="abrir_modal_add_pavimentos('${obra.nome_obra}')">
+                        <button class="btn btn-warning btn-sm" onclick="abrir_modal_add_pavimentos('${obra.nome_obra}')" name="btnAddPavimentos">
                             <i class="fas fa-plus"></i>
                         </button>
-                        <button class="btn btn-secondary btn-sm" onclick="atualiza_modal_pavimentos_geral('${obra.nome_obra}');toggleModal('modalPavimentosGerais')">
+                        <button class="btn btn-secondary btn-sm" onclick="atualiza_modal_pavimentos_geral('${obra.nome_obra}');toggleModal('modalPavimentosGerais')" name="btnPavimentosGerais">
                             <i class="fas fa-list"></i>
                         </button>
-                        <button class="btn btn-info btn-sm" onclick="loadEditObra('${obra.nome_obra}')">
+                        <button class="btn btn-info btn-sm" onclick="loadEditObra('${obra.nome_obra}')" name="btnEditObra">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn btn-info btn-sm" onclick="abrir_modal_gallery('${obra.nome_obra}')">
@@ -590,6 +594,7 @@
             })})
             .catch(error => console.error('Erro:', error));
             console.log(`Finalizado reload_table()`);
+            gerencia_acesso()
         }
 
         //enviar post para insert no banco de dados
@@ -1177,7 +1182,31 @@
             console.log(`Finalizado gera_planilha()`);
         }
 
-    reload_table()
+        //gerencia acesso do usuario
+        function gerencia_acesso() {
+            console.log('iniciando o gerenciador de acesso')
+            if (tipo_usuario == "usuario") {
+                document.getElementById('btnModalObra').disabled = true;
+                document.getElementById('btnModalUsuarios').disabled = true;
+                document.getElementById('btnGeraPlanilha').disabled = true;
+                document.getElementById('apenas_obras_ativas').disabled = true;
+                const btnsEditObra = document.getElementsByName("btnEditObra");
+                const btnsPavimentosGerais = document.getElementsByName("btnPavimentosGerais");
+                const btnsAddPavimentos = document.getElementsByName("btnAddPavimentos");
+                for (let i = 0; i < btnsEditObra.length; i++) {
+                    console.log(btnsEditObra)
+                    // console.log(btnsEditObra[i])
+                    // btnsEditObra[i].disabled = true;
+                    // console.log(btnsEditObra[i])
+                    // btnsPavimentosGerais[i].disabled = true;
+                    // btnsAddPavimentos[i].disabled = true;
+                }
+            }
+            alert(`Seja Bem Vindo ${usuario} !`)
+            console.log('finalizado o gerenciador de acesso')
+        }
+
+    reload_table();
     </script>
 
 </body>
