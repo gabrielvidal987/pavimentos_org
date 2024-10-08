@@ -160,20 +160,19 @@
         .then(response => response.json())
         .then(data => {
             data.forEach((usuario, index) => {
-                console.log(usuario)
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${usuario.nome}</td>
                     <td>${usuario.login}</td>
                     <td>
-                        <button class="btn btn-info btn-sm" onclick="document.getElementById('modalAltera').setAttribute('login','${usuario.login}');document.getElementById('nomeEdit').value = '${usuario.nome}';document.getElementById('emailEdit').value = '${usuario.login}';document.getElementById('tipo_usuarioEdit').value = '${usuario.tipo}';toggleModal('modalAltera')">
+                        <button class="btn btn-info btn-sm" onclick="document.getElementById('modalAltera').setAttribute('login','${usuario.login}');document.getElementById('nomeEdit').value = '${usuario.nome}';document.getElementById('emailEdit').value = '${usuario.login}';document.getElementById('tipo_usuarioEdit').value = '${usuario.tipo_usuario}';toggleModal('modalAltera')">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn btn-danger btn-sm" onclick="removerUsuario('${usuario.login}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
-                    <td>${usuario.tipo}</td>
+                    <td>${usuario.tipo_usuario}</td>
                 `;
                 table.appendChild(row);
             })})

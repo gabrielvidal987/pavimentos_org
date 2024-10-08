@@ -15,7 +15,7 @@ node -v
 #após instalar o node:
 
 #comando para passar um arquivo (nesse caso uma pasta toda) para o servidor que o putty ta conectado (precisa ir para o caminho do pscp na pasta local do putty):
-pscp -r C:\Users\SC11\Desktop\pavimentos_orgserv root@82.197.65.112:/home/root/
+pscp -r C:\Users\SC11\Desktop\pavimentos_org\controle\server.js root@82.197.65.112:/home/root/pavimentos_orgserv/pavimentos_org/controle/
 
 **importante: para rodar o server é necessario o arquivo de server.js, os packages e os node_modules
 
@@ -75,3 +75,6 @@ pm2 restart server.js
 
 Remover um aplicativo:
 pm2 delete server.js
+
+remover todos os servidores do pm2:
+pm2 delete all

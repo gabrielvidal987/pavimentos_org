@@ -97,7 +97,7 @@
         </a>
         <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
         <label>
-            <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas">
+            <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas" checked>
             Mostrar apenas obras em andamento
         </label><br>
         <table class="table table-striped" style="font-size: 12px;">
@@ -488,7 +488,7 @@
             .then(data => {
                 data.forEach((obra, index) => {
                     if (document.getElementById('apenas_obras_ativas').checked) {
-                        if (obra.ativo == '0') {
+                        if (obra.obra_ativa == '0') {
                             return; //ignora as obras com ativo = 0 ou seja inativas
                         }
                     }

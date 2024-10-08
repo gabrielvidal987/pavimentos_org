@@ -96,6 +96,10 @@
         <i class="fas fa-sign-out-alt"></i> Sair
         </a>
         <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
+        <label>
+            <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas" checked>
+            Mostrar apenas obras em andamento
+        </label><br>
         <table class="table table-striped" style="font-size: 12px;">
             <thead class="thead-light">
                 <tr>
@@ -195,7 +199,7 @@
             </div>
             <div class="modal-footer">
                 
-                <button type="submit" class="btn btn-primary" form="obraForm" onclick="insert_bd_obra()">
+                <button type="button" class="btn btn-primary" form="obraForm" onclick="insert_bd_obra()">
                     <i class="fas fa-save"></i>
                 </button>
             </div>
@@ -221,7 +225,7 @@
                         <label for="dataPavimento">Data</label>
                         <input type="date" id="dataPavimento" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" onclick="add_pavimento()">
+                    <button type="button" class="btn btn-primary" onclick="add_pavimento()">
                         <i class="fas fa-save"></i>
                     </button>
                 </form>
@@ -405,10 +409,10 @@
                         <input type="text" id="editLaje" class="form-control" required>
                     </div>
                     <div style="margin-top: 1em;"></div>
-                    <button type="submit" class="btn btn-primary" onclick="finalizar_obra()">
+                    <button type="button" class="btn btn-primary" onclick="finalizar_obra()">
                         <i class="fas fa-check"></i>
                     </button>
-                    <button type="submit" class="btn btn-primary" onclick="update_obra()">
+                    <button type="button" class="btn btn-primary" onclick="update_obra()">
                         <i class="fas fa-save"></i>
                     </button>                
                 </form>
@@ -483,6 +487,11 @@
             .then(response => response.json())
             .then(data => {
                 data.forEach((obra, index) => {
+                    if (document.getElementById('apenas_obras_ativas').checked) {
+                        if (obra.obra_ativa == '0') {
+                            return; //ignora as obras com ativo = 0 ou seja inativas
+                        }
+                    }
                     const row = document.createElement('tr');
                     row.innerHTML = `
                     <td>${limitarTexto(obra.projetista, maxLength)}</td>
@@ -604,7 +613,7 @@
             };
             for (const key in obra) {
                 if (obra[key] == "") {
-                    alert(`Todos os campos devem ser preenchidos.`);
+                    alert(`Todos os campos devem ser preenchidos!!`);
                     return; // Sai da função se algum campo estiver vazio
                 }
             }
@@ -893,15 +902,16 @@
             event.preventDefault();
             console.log(`Iniciando insert_bd_obra()`);
             var nome_obra = document.getElementById('modalPavimento').getAttribute('nome_obra');
+            console.log(nome_obra)
             var pavimento = {
                 obra_nome : nome_obra,
                 nome_pavimento: document.getElementById('nomePavimento').value,
                 data_prev: document.getElementById('dataPavimento').value
             };
-            for (const key in pavimento) {
-                if (pavimento[key] === "") {
-                    alert(`Todos os campos devem ser preenchidos`);
-                    return; // Sai da função se algum campo estiver vazio
+            for (var key in pavimento) {
+                if (pavimento[key] === '') {
+                    alert('Preencha todos os campos');
+                    return;
                 }
             }
             fetch(`${urlServ}/api/pavimentos`, {
@@ -1120,6 +1130,11 @@
                 }
                 rows[i].style.display = found ? '' : 'none';
             }
+        });
+
+        //filtra a tabela de obras gerais
+        document.getElementById('apenas_obras_ativas').addEventListener('change', function() {
+            reload_table()
         });
 
         //filtrar a tabela de pavimentos gerais
