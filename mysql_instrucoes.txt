@@ -59,7 +59,7 @@ CREATE TABLE usuarios (
     login VARCHAR(100) DEFAULT NULL,
     senha VARCHAR(100) DEFAULT NULL,
     ult_acesso DATETIME DEFAULT CURRENT_TIMESTAMP,
-	tipo_usuario VARCHAR DEFAULT 'usuario'
+	tipo_usuario VARCHAR(20) DEFAULT 'usuario'
 );
 
 

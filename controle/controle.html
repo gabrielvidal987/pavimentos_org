@@ -585,11 +585,26 @@
                         <button class="btn btn-info btn-sm" onclick="loadEditObra('${obra.nome_obra}')" name="btnEditObra">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-info btn-sm" onclick="abrir_modal_gallery('${obra.nome_obra}')">
+                        <button class="btn btn-info btn-sm" onclick="abrir_modal_gallery('${obra.nome_obra}')" name="btnGallery">
                             <i class="fas fa-camera"></i>
                         </button>
                     </td>
                 `;
+                //caso seja usuario de baixo nivel de acesso ele só consegue visualizar e adicionar galeria
+                if (tipo_usuario == "usuario") {
+                    // Selecionar todos os botões dentro da nova linha
+                    const buttons = row.querySelectorAll('button');
+                    // Remover os três primeiros botões, se existirem
+                    buttons[0].remove();
+                    buttons[1].remove();
+                    buttons[2].remove();
+                    // Selecionar todos os <td> dentro da nova linha
+                    const cells = row.querySelectorAll('td');
+                    // Adicionar a classe 'no-click' a cada célula
+                    for (let i = 0; i < cells.length - 1; i++) {
+                        cells[i].style.pointerEvents = 'none'; // Desabilita eventos de clique
+                    };
+                }
                 tabelaObras.appendChild(row); // Adiciona a linha à tabela
             })})
             .catch(error => console.error('Erro:', error));
@@ -1190,23 +1205,14 @@
                 document.getElementById('btnModalUsuarios').disabled = true;
                 document.getElementById('btnGeraPlanilha').disabled = true;
                 document.getElementById('apenas_obras_ativas').disabled = true;
-                const btnsEditObra = document.getElementsByName("btnEditObra");
-                const btnsPavimentosGerais = document.getElementsByName("btnPavimentosGerais");
-                const btnsAddPavimentos = document.getElementsByName("btnAddPavimentos");
-                for (let i = 0; i < btnsEditObra.length; i++) {
-                    console.log(btnsEditObra)
-                    // console.log(btnsEditObra[i])
-                    // btnsEditObra[i].disabled = true;
-                    // console.log(btnsEditObra[i])
-                    // btnsPavimentosGerais[i].disabled = true;
-                    // btnsAddPavimentos[i].disabled = true;
-                }
+                var btnsEditObra = document.getElementsByName("btnEditObra");
+                var btnsPavimentosGerais = document.getElementsByName("btnPavimentosGerais");
+                var btnsAddPavimentos = document.getElementsByName("btnAddPavimentos");
             }
-            alert(`Seja Bem Vindo ${usuario} !`)
             console.log('finalizado o gerenciador de acesso')
         }
 
-    reload_table();
+        reload_table();
     </script>
 
 </body>

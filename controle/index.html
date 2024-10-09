@@ -119,8 +119,9 @@
             })
             .then(data => {
                 if (data.success) {
-                    localStorage.setItem('usuario',login_dados.username );
-                    localStorage.setItem('tipo_usuario','usuario' ); //colocar para servidor retornar tipo de usuario
+                    console.log(data.message)
+                    localStorage.setItem('usuario',login_dados.username ); 
+                    localStorage.setItem('tipo_usuario',data.message );
                     window.location.href = "controle.html"; // Redirecionar para controle.html
                 }
                 else { alert(data.message); }

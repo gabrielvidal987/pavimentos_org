@@ -85,7 +85,7 @@ app.get('/api/dados', (req, res) => {
 // Endpoint para obter os dados de todos os usuários
 app.get('/api/usuarios', (req, res) => {
     db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','Requisição para pegar dados dos usuarios')`)
-    db.query('SELECT nome, login FROM usuarios ORDER BY nome;', (err, results) => {
+    db.query('SELECT nome, login, tipo_usuario FROM usuarios ORDER BY nome;', (err, results) => {
         if (err) throw err;
         res.json(results);
         db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','Retornados dados dos usuarios')`)
@@ -175,7 +175,7 @@ app.post('/api/dados', (req, res) => {
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','user ${username} senha ${password}')`)
-    const sqlQuery = `SELECT senha FROM usuarios WHERE login = ? OR nome = ?;`;
+    const sqlQuery = `SELECT senha,tipo_usuario FROM usuarios WHERE login = ? OR nome = ?;`;
     db.query(sqlQuery, [username, username], (err, results) => {
         if (err) {
             console.error("Erro ao consultar o banco de dados: ", err);
@@ -187,7 +187,7 @@ app.post('/api/login', (req, res) => {
             const storedPassword = results[0].senha;
             const isPasswordCorrect = password === storedPassword;
             res.json({
-                message: isPasswordCorrect ? "Login bem-sucedido" : "Senha incorreta",
+                message: isPasswordCorrect ? results[0].tipo_usuario : "Senha incorreta",
                 success: isPasswordCorrect // Retorna true se a senha for correta, false se for incorreta
             });
             db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','${res.message}')`)
