@@ -122,6 +122,8 @@
                     console.log(data.message)
                     localStorage.setItem('usuario',login_dados.username ); 
                     localStorage.setItem('tipo_usuario',data.message );
+                    console.log(localStorage.getItem('usuario'));
+                    console.log(localStorage.getItem('tipo_usuario'));
                     window.location.href = "controle.html"; // Redirecionar para controle.html
                 }
                 else { alert(data.message); }
