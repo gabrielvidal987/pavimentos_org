@@ -76,12 +76,61 @@
             right: 635px;
             top: 35px;
         }
+        .div_main {
+            width: 95%;
+            margin-top: 5em;
+            margin-left: 2em;
+            margin-right: 2em;
+        }   
+        .text-center {
+            margin-top: 2.5em;
+            color: #333;
+            margin-bottom: -40px;
+            font-size: 35px;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
+
+        #apenas_obras_ativas {
+            margin-bottom: 2em;        
+        }
+        .table.table-striped {
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background-color: #fffbfb; /* Cor de fundo para dispositivos móveis */
+            }
+            
+            .text-center {
+                margin-top: 2.5em;
+                color: #333;
+                margin-bottom: -40px;
+                font-size: 21px;
+                font-family: sans-serif;
+                font-weight: bold;
+            }
+            
+            .div_main {
+                width: 80%;
+                margin-top: 5em;
+                margin-left: 2em;
+                margin-right: 2em;
+            }    
+         
+            .table.table-striped {
+                font-size: 20px;
+            }
+
+        }
+
     </style>
 </head>
 <body>
-    <div style="width: 95%;margin-left: 2em;margin-top: 2em;">
-        <h2 class="text-center">Controle de Obras</h2>
-        
+    <!-- <div style="width: 95%;margin-left: 2em;margin-top: 2em;"> -->
+    <h2 class="text-center">CONTROLE DE OBRAS</h2>
+    <div class="div_main">
         <button class="btn btn-primary mb-3" onclick="toggleModal('modalObra')" id="btnModalObra">
         <i class="fa-sharp fa-solid fa-building"></i>
         </button>
@@ -98,9 +147,9 @@
         <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
         <label>
             <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas" checked>
-            Mostrar apenas obras em andamento
+            Apenas obras em andamento
         </label><br>
-        <table class="table table-striped" style="font-size: 12px;">
+        <table class="table table-striped">
             <thead class="thead-light">
                 <tr>
                     <th style="text-align: center;">Projetista</th>
