@@ -39,6 +39,22 @@
             overflow: auto;
             background-color: rgba(0,0,0,0.4);
         }
+        .modal.pavimentos {
+            width: 1250px; 
+            top: 5%;
+            left: 3%;
+            height: 550px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .modal_pavimentos_div_ativa {
+            width: 90%;
+            margin-left: 25px;
+            margin-top: 25px;
+            height: 500px;
+            border-radius: 10px;
+            background-color: #f7f9fc;
+        }
         .modalPav {
             display: none;
             position: fixed;
@@ -57,7 +73,9 @@
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 500px;
+            max-width: 600px;
+            top: -30%;
+            border-radius: 10px;
         }
         .pavimentos {
             margin-top: 10px;
@@ -90,19 +108,14 @@
             font-family: sans-serif;
             font-weight: bold;
         }
-
         #apenas_obras_ativas {
             margin-bottom: 2em;        
         }
         .table.table-striped {
             font-size: 12px;
         }
-
-        @media (max-width: 768px) {
-            body {
-                background-color: #fffbfb; /* Cor de fundo para dispositivos móveis */
-            }
-            
+        /* Estilos específicos para mobiles */
+        @media (max-width: 1024px) {
             .text-center {
                 margin-top: 2.5em;
                 color: #333;
@@ -111,18 +124,69 @@
                 font-family: sans-serif;
                 font-weight: bold;
             }
-            
-            .div_main {
-                width: 80%;
-                margin-top: 5em;
-                margin-left: 2em;
-                margin-right: 2em;
-            }    
-         
-            .table.table-striped {
-                font-size: 20px;
+            /* Para orientação retrato */
+            @media (orientation: portrait) {
+                .div_main {
+                    width: 85%;
+                    margin-top: 5em;
+                    margin-left: 2em;
+                    margin-right: 2em;
+                }
+                .modal-dialog {
+                    background-color: #fefefe;
+                    margin: 15% auto;
+                    padding: 20px;
+                    border: 1px solid #888;
+                    width: 80%;
+                    max-width: 600px;
+                    top: -5%;
+                    border-radius: 10px;
+                }
+                .modal.pavimentos {
+                    width: 93%; 
+                    top: 5%;
+                    left: 3%;
+                    height: 550px;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    overflow-x: auto;
+                }
+                .modal_pavimentos_div_ativa {
+                    width: 900px;
+                    margin-left: 25px;
+                    margin-top: 25px;
+                    margin-right: 25px;
+                    height: 470px;
+                    border-radius: 10px;
+                    background-color: #f7f9fc;
+                }
             }
 
+            /* Para orientação paisagem */
+            @media (orientation: landscape) {
+                .div_main {
+                    width: 90%;
+                    margin-top: 5em;
+                    margin-left: 2em;
+                    margin-right: 2em;
+                }
+                .modal-dialog {
+                    background-color: #fefefe;
+                    margin: 15% auto;
+                    padding: 20px;
+                    border: 1px solid #888;
+                    width: 80%;
+                    max-width: 600px;
+                    top: -15%;
+                    border-radius: 10px;
+                }
+            }
+            .table.table-striped {
+                font-size: 15px;
+            }
+            #apenas_obras_ativas {
+                margin-bottom: 2em;        
+            }
         }
 
     </style>
@@ -174,7 +238,7 @@
 
     <!-- Modal para adicionar obra -->
     <div id="modalObra" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document" style="max-width: 600px; top: -30%;border-radius: 10px;">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Cadastrar Obra</h5>
@@ -247,7 +311,6 @@
                 </form>
             </div>
             <div class="modal-footer">
-                
                 <button type="button" class="btn btn-primary" form="obraForm" onclick="insert_bd_obra()">
                     <i class="fas fa-save"></i>
                 </button>
@@ -274,39 +337,15 @@
                         <label for="dataPavimento">Data</label>
                         <input type="date" id="dataPavimento" class="form-control" required>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="add_pavimento()">
-                        <i class="fas fa-save"></i>
-                    </button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="add_pavimento()" style="margin-top: 20px;">
+                            <i class="fas fa-save"></i>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-    </div>
-
-    <!-- Modal para trocar cor -->
-    <div id="modalEditCor" class="modal" style="z-index: 1000;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Troca cor</h5>
-                    <button type="button" class="close" onclick="toggleModal('modalEditCor')">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-striped" id="tabelaEditCorHead" style="width: 100%; table-layout: fixed;">
-                        <thead>
-                            <tr>
-                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Pilar</th>
-                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Grade</th>
-                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Viga</th>
-                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Garfo</th>
-                                <th style="width: 20%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Laje</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelaEditCorBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Modal para editar pavimento -->
@@ -327,9 +366,11 @@
                         <label for="editDataPavimento">Data</label>
                         <input type="date" id="editDataPavimento" class="form-control" required>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="altera_pavimento()">
-                        <i class="fas fa-save"></i>
-                    </button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="altera_pavimento()">
+                            <i class="fas fa-save"></i>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -337,8 +378,8 @@
     </div>
 
     <!-- Modal para visualizar todos os pavimentos -->
-    <div id="modalPavimentosGerais" class="modal" style="width: 1250px; top: 5%;left: 3%;height: 550px; border-radius: 10px;overflow: hidden">
-        <div style="width: 1200px;margin-left: 25px;margin-top: 25px;height: 500px; border-radius: 10px;background-color: #f7f9fc;" >
+    <div id="modalPavimentosGerais" class="modal pavimentos">
+        <div class="modal_pavimentos_div_ativa" >
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title" style="margin-left: 16em;">Pavimentos da obra</h3>
@@ -352,7 +393,7 @@
                 <div class="modal-body">
                     <input type="text" id="filterInputPav" class="form-control mb-3" placeholder="Filtrar..." oninput="filterTablePav()">
                     <div style="max-height: 200px; overflow-y: auto;">
-                        <table class="table table-striped" id="tabelaPavimentosGeraisHead" style="width: 100%; table-layout: fixed;">
+                        <table class="table table-striped pavimentos" id="tabelaPavimentosGeraisHead" style="width: 100%; table-layout: fixed;">
                             <thead>
                                 <tr>
                                     <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nome</th>
@@ -372,7 +413,7 @@
 
     <!-- Modal para editar obra -->
     <div id="modalEditObra" class="modal">
-    <div class="modal-dialog" style="max-width: 600px; top: -30%;border-radius: 10px;">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Editar Obra</h5>
@@ -458,12 +499,14 @@
                         <input type="text" id="editLaje" class="form-control" required>
                     </div>
                     <div style="margin-top: 1em;"></div>
-                    <button type="button" class="btn btn-primary" onclick="finalizar_obra()">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="update_obra()">
-                        <i class="fas fa-save"></i>
-                    </button>                
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="finalizar_obra()">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="update_obra()">
+                            <i class="fas fa-save"></i>
+                        </button>  
+                    </div>
                 </form>
             </div>
         </div>

@@ -43,12 +43,14 @@
             font-weight: bold;
         }
 
-        @media (max-width: 769px) {
+        /* Estilos específicos para mobiles */
+        @media (max-width: 1024px) {
             body {
                 background-color: rgb(233, 233, 233); /* Cor de fundo para dispositivos desktop */
             }
 
             .container.mt-5 {
+                width: 90%;
             }
 
             .text-center {
@@ -58,6 +60,23 @@
                 font-size: 35px;
                 font-family: sans-serif;
                 font-weight: bold;
+            }
+
+            @media (orientation: portrait) {
+                .table.table-striped {
+                    font-size: 8px;
+                }
+                .custom-icon {
+                    font-size: 8px;
+                }
+            }
+            @media (orientation: landscape) {
+                .table.table-striped {
+                    font-size: 12px;
+                }
+                .custom-icon {
+                    font-size: 8px;
+                }
             }
             
         }
@@ -76,9 +95,7 @@
             <i class="fas fa-arrow-left"></i>
         </a>
     </div>
-    
     <input type="text" id="filter" class="form-control mb-3" placeholder="Filtrar por nome...">
-
     <table class="table table-striped">
         <thead class="thead-light">
             <tr>
@@ -193,11 +210,11 @@
                     <td>${usuario.nome}</td>
                     <td>${usuario.login}</td>
                     <td>
-                        <button class="btn btn-info btn-sm" onclick="document.getElementById('modalAltera').setAttribute('login','${usuario.login}');document.getElementById('nomeEdit').value = '${usuario.nome}';document.getElementById('emailEdit').value = '${usuario.login}';document.getElementById('tipo_usuarioEdit').value = '${usuario.tipo_usuario}';toggleModal('modalAltera')">
-                            <i class="fas fa-edit"></i>
+                        <button class="btn btn-info btn-sm custom-icon" onclick="document.getElementById('modalAltera').setAttribute('login','${usuario.login}');document.getElementById('nomeEdit').value = '${usuario.nome}';document.getElementById('emailEdit').value = '${usuario.login}';document.getElementById('tipo_usuarioEdit').value = '${usuario.tipo_usuario}';toggleModal('modalAltera')">
+                            <i class="fas fa-edit custom-icon"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm" onclick="removerUsuario('${usuario.login}')">
-                            <i class="fas fa-trash"></i>
+                        <button class="btn btn-danger btn-sm custom-icon" onclick="removerUsuario('${usuario.login}')">
+                            <i class="fas fa-trash custom-icon"></i>
                         </button>
                     </td>
                     <td>${usuario.tipo_usuario}</td>
