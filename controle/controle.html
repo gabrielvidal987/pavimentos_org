@@ -377,6 +377,34 @@
                 margin-bottom: 2em;        
             }
         }
+        @media (min-width: 1025px) {
+            .modal-header.pavimentos {
+            margin: 0;
+            padding: 0;
+            font-size: 2.5em;
+            border: 0;
+            margin-left: 13em;
+            }
+            .btn.btn-primary.pavimentos {
+                margin-left: 13em;
+                margin-top: 2em;
+                margin-bottom: 1em;
+                font-size: 23px;
+                background-color: #458fff;
+            }
+            .btn.btn-secondary.pavimentos {
+                font-size: 23px;
+                margin-top: 2em;
+                margin-bottom: 1em;
+                margin-right: 1em;
+            }
+            .table.table-striped.pavimentos, #tabelaPavimentosGerais {
+                font-size: 18px;
+            }
+            .div_table_pavimentos_gerais {
+                max-height: 280px;
+            }
+        }
 
     </style>
 </head>
@@ -1121,7 +1149,6 @@
                 data.forEach((imagem, index) => {
                     const img = document.createElement('img');
                     const caminho_imagem = imagem.caminho
-                    console.log(caminho_imagem)
                     img.src = `${urlServ}/${caminho_imagem}`
                     img.alt = 'caminho_imagem'
                     img.onclick = function() {
