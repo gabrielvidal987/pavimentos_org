@@ -453,7 +453,7 @@
                     <th style="text-align: center;">Nome da Obra</th>
                     <th style="text-align: center;">Endereço</th>
                     <th style="text-align: center;">Torre</th>
-                    <th style="text-align: center;">Data do Concreto</th>
+                    <th style="text-align: center;" onclick="sortTableObras(4)">Data do Concreto</th>
                     <th style="text-align: center;">Pavimento Ativo</th>
                     <th style="text-align: center;">Pilar</th>
                     <th style="text-align: center;">Grade</th>
@@ -463,7 +463,7 @@
                     <th style="text-align: center;">Ações</th>
                 </tr>
             </thead>
-            <tbody id="tabelaObras">
+            <tbody id="tabelaObras" data-sort-direction="asc">
                 <!-- Dados cadastrados serão exibidos aqui -->
             </tbody>
         </table>
@@ -630,7 +630,7 @@
                             <thead>
                                 <tr>
                                     <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nome</th>
-                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Data</th>
+                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" onclick="sortTablePavimentos(1)">Data</th>
                                     <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ativo</th>
                                     <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ações</th>
                                 </tr>
@@ -935,6 +935,66 @@
             .catch(error => console.error('Erro:', error));
             console.log(`Finalizado reload_table()`);
             gerencia_acesso()
+        }
+
+        //organiza pela coluna nas obras gerais
+        function sortTableObras(columnIndex) {
+            console.log("Reorganizando a tabela por data de pavimento")
+            const table = document.getElementsByClassName('table table-striped');
+            const tbody = document.getElementById('tabelaObras');
+            const rows = Array.from(tbody.rows);
+            const isAscending = tbody.dataset.sortDirection === 'asc';
+            const direction = isAscending ? 1 : -1;
+            // Função para converter a data no formato DD/MM/YYYY para YYYY-MM-DD
+            const parseDate = (dateString) => {
+                const [day, month, year] = dateString.split('/');
+                return new Date(`${year}-${month}-${day}`);
+            };
+            // Ordenar as linhas
+            rows.sort((a, b) => {
+                const dateA = parseDate(a.cells[columnIndex].innerText);
+                const dateB = parseDate(b.cells[columnIndex].innerText);
+                return direction * (dateA - dateB);
+            });
+            // Remover as linhas existentes
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+            // Adicionar as linhas ordenadas
+            rows.forEach(row => tbody.appendChild(row));
+            // Atualizar a direção de ordenação
+            tbody.dataset.sortDirection = isAscending ? 'desc' : 'asc';
+            console.log("acabou de reorganizar")
+        }
+
+        //organiza pela coluna nos pavimentos
+        function sortTablePavimentos(columnIndex) {
+            console.log("Reorganizando a tabela por data de pavimento")
+            const table = document.getElementById('tabelaPavimentosGeraisHead');
+            const tbody = document.getElementById('tabelaPavimentosGerais');
+            const rows = Array.from(tbody.rows);
+            const isAscending = tbody.dataset.sortDirection === 'asc';
+            const direction = isAscending ? 1 : -1;
+            // Função para converter a data no formato DD/MM/YYYY para YYYY-MM-DD
+            const parseDate = (dateString) => {
+                const [day, month, year] = dateString.split('/');
+                return new Date(`${year}-${month}-${day}`);
+            };
+            // Ordenar as linhas
+            rows.sort((a, b) => {
+                const dateA = parseDate(a.cells[columnIndex].innerText);
+                const dateB = parseDate(b.cells[columnIndex].innerText);
+                return direction * (dateA - dateB);
+            });
+            // Remover as linhas existentes
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+            // Adicionar as linhas ordenadas
+            rows.forEach(row => tbody.appendChild(row));
+            // Atualizar a direção de ordenação
+            tbody.dataset.sortDirection = isAscending ? 'desc' : 'asc';
+            console.log("acabou de reorganizar")
         }
 
         //enviar post para insert no banco de dados
