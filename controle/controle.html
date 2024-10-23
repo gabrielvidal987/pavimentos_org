@@ -136,6 +136,37 @@
         .modal_title_gallery {
             padding-left: 16em;
         }
+        .btn.btn-primary.gallery {
+            margin-left: 22em;
+        }
+        #galeriaId {
+            max-width: 100%; 
+            max-height: 420px; 
+            overflow-y: auto; 
+            overflow-x: hidden;
+        }
+        #imagemExpandida {
+            width: 1110px; 
+            height: auto;
+            margin: 30px;
+        }
+        .modal.imagem_expandida {
+            width: 1250px; 
+            top: 5%;
+            left: 3%;
+            height: 550px; 
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 1050;
+        }
+        #modal-dialo.imagem_expandida_ativa {
+            width: 1170px;
+            margin-left: 40px;
+            margin-top: 35px;
+            height: 480px; 
+            border-radius: 10px;
+            background-color: #ffffff;
+        }
         /* Estilos específicos para mobiles */
         @media (max-width: 1024px) {
             .text-center {
@@ -200,7 +231,26 @@
                     border-radius: 10px;
                     background-color: #f7f9fc;
                 }
-
+                .modal_title_gallery {
+                    padding: 0;
+                }
+                .btn.btn-primary.gallery,.btn.btn-secondary.gallery {
+                    margin-left: 0;
+                }
+                #imagemExpandida {
+                    width: 90%; 
+                    height: 250px;
+                    margin: 30px;
+                }
+                .modal.imagem_expandida {
+                    width: 90%;
+                }
+                .modal-dialo.imagem_expandida_ativa {
+                    width: 100%;
+                    margin-left: 1em;
+                    margin-top: 1em;
+                    border-radius: 10px;
+                }
 
             }
 
@@ -252,7 +302,7 @@
         </a>
         <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
         <label>
-            <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas" checked>
+            <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas">
             Apenas obras em andamento
         </label><br>
         <table class="table table-striped">
@@ -561,27 +611,27 @@
             <div class="modal-content">
                 <div class="modal-header gallery">
                     <h3 class="modal_title_gallery">Galeria da obra</h3>
-                    <button class="btn btn-primary gallery" onclick="abrir_modal_add_image(document.getElementById('modalGallery').getAttribute('nome_obra'))" style="margin-left: 22em;">
+                    <button class="btn btn-primary gallery" onclick="abrir_modal_add_image(document.getElementById('modalGallery').getAttribute('nome_obra'))" >
                         <i class="fas fa-plus"></i>
                     </button>  
                     <a type="button" class="btn btn-secondary gallery" onclick="toggleModal('modalGallery');reload_table();document.getElementById('galeriaId').innerHTML = ''">
                         <i class="fas fa-arrow-left"></i>
                     </a>   
                 </div>
-                <div class="container" id="galeriaId" style="max-width: 100%; max-height: 420px; overflow-y: auto; overflow-x: hidden;">
+                <div class="container" id="galeriaId">
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal para exibir a imagem em tela cheia -->
-    <div id="modalImagem" class="modal" style="width: 1250px; top: 5%;left: 3%;height: 550px; border-radius: 10px;overflow: hidden;z-index: 1050;">
-        <div class="modal-dialo" style="width: 1170px;margin-left: 40px;margin-top: 35px;height: 480px; border-radius: 10px;background-color: #ffffff;" >
+    <div id="modalImagem" class="modal imagem_expandida">
+        <div class="modal-dialo imagem_expandida_ativa" >
             <div class="modal-content" >
                 <a type="button" class="btn btn-secondary" onclick="toggleModal('modalImagem')" style="margin: 10px; width: 35px;">
                     <i class="fas fa-arrow-left"></i>
                 </a>   
-                <img id="imagemExpandida" src="" style="width: 1110px; height: auto;margin: 30px;"/>
+                <img id="imagemExpandida" src=""/>
             </div>
         </div>
     </div>
