@@ -167,6 +167,23 @@
             border-radius: 10px;
             background-color: #ffffff;
         }
+        .div_table_pavimentos_gerais{
+            max-height: 200px; 
+            overflow-y: auto;
+        }
+        .table.table-striped.pavimentos {
+            width: 100%; 
+            table-layout: fixed;
+        }
+        .modal-header.pavimentos {
+            margin: 0;
+            padding: 0;
+            font-size: 15px;
+            margin-left: 16em;
+        }
+        .btn.btn-primary.pavimentos {
+            margin-left: 22em;
+        }
         /* Estilos específicos para mobiles */
         @media (max-width: 1024px) {
             .text-center {
@@ -251,7 +268,6 @@
                     margin-top: 1em;
                     border-radius: 10px;
                 }
-
             }
 
             /* Para orientação paisagem */
@@ -272,6 +288,87 @@
                     top: -15%;
                     border-radius: 10px;
                 }
+                .modal.pavimentos {
+                    width: 95%; 
+                    top: 5%;
+                    left: 3%;
+                    height: 320px;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    overflow-x: auto;
+                }
+                .modal_pavimentos_div_ativa {
+                    width: 90%;
+                    margin-left: 25px;
+                    margin-top: 25px;
+                    margin-right: 25px;
+                    height: 270px;
+                    border-radius: 10px;
+                    background-color: #f7f9fc;
+                }
+                .modal-header.pavimentos {
+                    margin: 0;
+                    padding: 0;
+                    font-size: 15px;
+                }
+                .btn.btn-primary.pavimentos {
+                    margin-left: 18em;
+                    margin-bottom: 1em;
+                }
+                .btn.btn-secondary.pavimentos {
+                    margin-bottom: 1em;
+                }
+                .modal.gallery {
+                    width: 95%; 
+                    top: 5%;
+                    left: 3%;
+                    height: 320px; 
+                    border-radius: 10px;
+                    overflow: hidden;
+                    overflow-x: auto;
+                }
+                .modal_gallery_div_ativa {
+                    width: 90%;
+                    margin-left: 25px;
+                    margin-top: 25px;
+                    height: 260px; 
+                    border-radius: 10px;
+                    background-color: #f7f9fc;
+                }
+                .modal_title_gallery {
+                    padding: 0;
+                }
+                .btn.btn-primary.gallery {
+                    margin-left: 14em;
+                }
+                #imagemExpandida {
+                    width: 80%; 
+                    height: 170px;
+                    margin-left: 6em;
+                }
+                .modal.imagem_expandida {
+                    width: 95%;
+                }
+                .modal-dialo.imagem_expandida_ativa {
+                    width: 95%;
+                    margin-left: 1em;
+                    margin-top: 1em;
+                    border-radius: 10px;
+                }
+                .div_table_pavimentos_gerais{
+                    max-height: 150px; 
+                    height: 100px;
+                    font-size: 15px;
+                    overflow-y: auto;
+                }
+                #tabelaPavimentosGerais {
+                    font-size: 11px;
+                    max-height: 100px;
+                }
+                .table.table-striped.pavimentos {
+                    font-size: 11px;
+                }
+
             }
             .table.table-striped {
                 font-size: 15px;
@@ -302,7 +399,7 @@
         </a>
         <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
         <label>
-            <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas">
+            <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas" checked>
             Apenas obras em andamento
         </label><br>
         <table class="table table-striped">
@@ -472,20 +569,20 @@
     <!-- Modal para visualizar todos os pavimentos -->
     <div id="modalPavimentosGerais" class="modal pavimentos">
         <div class="modal_pavimentos_div_ativa" >
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" style="margin-left: 16em;">Pavimentos da obra</h3>
-                    <button class="btn btn-primary" onclick="abrir_modal_add_pavimentos(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))" style="margin-left: 22em;">
+            <div class="modal_pavimentos_div_ativa">
+                <div class="modal-header pavimentos">
+                    <h3 class="modal-title pavimentos">Pavimentos da obra</h3>
+                    <button class="btn btn-primary pavimentos" onclick="abrir_modal_add_pavimentos(document.getElementById('modalPavimentosGerais').getAttribute('nome_obra'))">
                         <i class="fas fa-plus"></i>
                     </button>  
-                    <a type="button" class="btn btn-secondary" onclick="toggleModal('modalPavimentosGerais');reload_table();document.getElementById('tabelaPavimentosGerais').innerHTML = ''">
+                    <a type="button" class="btn btn-secondary pavimentos" onclick="toggleModal('modalPavimentosGerais');reload_table();document.getElementById('tabelaPavimentosGerais').innerHTML = ''">
                         <i class="fas fa-arrow-left"></i>
                     </a>   
                 </div>
                 <div class="modal-body">
                     <input type="text" id="filterInputPav" class="form-control mb-3" placeholder="Filtrar..." oninput="filterTablePav()">
-                    <div style="max-height: 200px; overflow-y: auto;">
-                        <table class="table table-striped pavimentos" id="tabelaPavimentosGeraisHead" style="width: 100%; table-layout: fixed;">
+                    <div class="div_table_pavimentos_gerais">
+                        <table class="table table-striped pavimentos" id="tabelaPavimentosGeraisHead" >
                             <thead>
                                 <tr>
                                     <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nome</th>
@@ -1023,7 +1120,9 @@
             .then(data => {
                 data.forEach((imagem, index) => {
                     const img = document.createElement('img');
-                    img.src = `${imagem.caminho}`
+                    const caminho_imagem = imagem.caminho
+                    img.src = `${urlServ}/galeria/${caminho_imagem}`
+                    img.alt = 'caminho_imagem'
                     img.onclick = function() {
                         // Ao clicar, mostra o modal e define a imagem expandida
                         document.getElementById('imagemExpandida').src = img.src;
@@ -1160,10 +1259,10 @@
                         <td>${pavimento.data_prev}</td>
                         <td>${pavimento.ativo}</td>
                         <td>
-                            <button class="btn btn-info btn-sm" onclick="document.getElementById('modalEditPavimento').setAttribute('pavimento','${pavimento.nome_pavimento}');document.getElementById('modalEditPavimento').setAttribute('obra','${obra_nome}');toggleModal('modalEditPavimento')">
+                            <button class="btn btn-info btn-sm pavimentos" onclick="document.getElementById('modalEditPavimento').setAttribute('pavimento','${pavimento.nome_pavimento}');document.getElementById('modalEditPavimento').setAttribute('obra','${obra_nome}');toggleModal('modalEditPavimento')">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleta_pavimento('${pavimento.nome_pavimento}','${obra_nome}')">
+                            <button class="btn btn-danger btn-sm pavimentos" onclick="deleta_pavimento('${pavimento.nome_pavimento}','${obra_nome}')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>

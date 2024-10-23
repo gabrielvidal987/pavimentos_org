@@ -68,6 +68,9 @@ app.post('/api/upload', upload.single('imagem'), (req, res) => {
     });
 });
 
+// Serve a pasta 'galeria' e outros arquivos estáticos
+app.use('/galeria', express.static(path.join(__dirname, 'galeria')));
+
 // Endpoint para buscar o caminho das imagens no sql
 app.get('/api/getimage/:nome_obra', (req, res) => {
     const nome_obra = req.params.nome_obra;
