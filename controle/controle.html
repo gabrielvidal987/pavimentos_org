@@ -1121,7 +1121,8 @@
                 data.forEach((imagem, index) => {
                     const img = document.createElement('img');
                     const caminho_imagem = imagem.caminho
-                    img.src = `${urlServ}/galeria/${caminho_imagem}`
+                    console.log(caminho_imagem)
+                    img.src = `${urlServ}/${caminho_imagem}`
                     img.alt = 'caminho_imagem'
                     img.onclick = function() {
                         // Ao clicar, mostra o modal e define a imagem expandida
