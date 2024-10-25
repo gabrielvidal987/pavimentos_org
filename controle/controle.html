@@ -184,6 +184,11 @@
         .btn.btn-primary.pavimentos {
             margin-left: 22em;
         }
+        #div_table_main {
+            max-height: 250px; /* Ajuste a altura conforme necessário */
+            overflow-y: auto;  /* Adiciona rolagem vertical */
+            border: 1px solid #ddd; /* Borda opcional */
+        }
         /* Estilos específicos para mobiles */
         @media (max-width: 1024px) {
             .text-center {
@@ -446,27 +451,29 @@
             <input type="checkbox" id="apenas_obras_ativas" name="apenas_obras_ativas" checked>
             Apenas obras em andamento
         </label><br>
-        <table class="table table-striped">
-            <thead class="thead-light">
-                <tr>
-                    <th style="text-align: center;">Projetista</th>
-                    <th style="text-align: center;">Nome da Obra</th>
-                    <th style="text-align: center;">Endereço</th>
-                    <th style="text-align: center;">Torre</th>
-                    <th style="text-align: center;" onclick="sortTableObras(4)">Data do Concreto</th>
-                    <th style="text-align: center;">Pavimento Ativo</th>
-                    <th style="text-align: center;">Pilar</th>
-                    <th style="text-align: center;">Grade</th>
-                    <th style="text-align: center;">Viga</th>
-                    <th style="text-align: center;">Garfo</th>
-                    <th style="text-align: center;">Laje</th>
-                    <th style="text-align: center;">Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaObras" data-sort-direction="asc">
-                <!-- Dados cadastrados serão exibidos aqui -->
-            </tbody>
-        </table>
+        <div id="div_table_main">
+            <table class="table table-striped">
+                <thead class="thead-light">
+                    <tr>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(0)">Projetista</th>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(1)">Nome da Obra</th>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(2)">Endereço</th>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(3)">Torre</th>
+                        <th style="text-align: center;" onclick="sortTableObras(4)">Data do Concreto</th>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(5)">Pavimento Ativo</th>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(6)">Pilar</th>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(7)">Grade</th>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(8)">Viga</th>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(9)">Garfo</th>
+                        <th style="text-align: center;" onclick="sortTableMainColumn(10)">Laje</th>
+                        <th style="text-align: center;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaObras" data-sort-direction="asc">
+                    <!-- Dados cadastrados serão exibidos aqui -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Modal para adicionar obra -->
@@ -629,9 +636,9 @@
                         <table class="table table-striped pavimentos" id="tabelaPavimentosGeraisHead" >
                             <thead>
                                 <tr>
-                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nome</th>
+                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" onclick="sortTablePavColumn(0)">Nome</th>
                                     <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" onclick="sortTablePavimentos(1)">Data</th>
-                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ativo</th>
+                                    <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" onclick="sortTablePavColumn(2)">Ativo</th>
                                     <th style="width: 25%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ações</th>
                                 </tr>
                             </thead>
@@ -1598,6 +1605,47 @@
             }
             console.log('finalizado o gerenciador de acesso')
         }
+        //reordena a coluna pela ordem alfabética a tabela principal de controle
+        function sortTableMainColumn(columnIndex) {
+            const tableBody = document.getElementById("tabelaObras");
+            const rows = Array.from(tableBody.getElementsByTagName("tr"));
+            const isAsc = tableBody.dataset.sortDirection === "asc";
+            // Função para comparar as células
+            const compare = (a, b) => {
+                const cellA = a.cells[columnIndex].innerText;
+                const cellB = b.cells[columnIndex].innerText;
+                return isAsc 
+                    ? cellA.localeCompare(cellB) // Ascendente
+                    : cellB.localeCompare(cellA); // Descendente
+            };
+            // Ordena as linhas
+            rows.sort(compare);
+            // Atualiza a direção da ordenação
+            tableBody.dataset.sortDirection = isAsc ? "desc" : "asc";
+            // Adiciona as linhas ordenadas de volta ao corpo da tabela
+            rows.forEach(row => tableBody.appendChild(row));
+        }
+        //reordena a coluna pela ordem alfabética a tabela dos pavimentos
+        function sortTablePavColumn(columnIndex) {
+            const tableBody = document.getElementById("tabelaPavimentosGerais");
+            const rows = Array.from(tableBody.getElementsByTagName("tr"));
+            const isAsc = tableBody.dataset.sortDirection === "asc";
+            // Função para comparar as células
+            const compare = (a, b) => {
+                const cellA = a.cells[columnIndex].innerText;
+                const cellB = b.cells[columnIndex].innerText;
+                return isAsc 
+                    ? cellA.localeCompare(cellB) // Ascendente
+                    : cellB.localeCompare(cellA); // Descendente
+            };
+            // Ordena as linhas
+            rows.sort(compare);
+            // Atualiza a direção da ordenação
+            tableBody.dataset.sortDirection = isAsc ? "desc" : "asc";
+            // Adiciona as linhas ordenadas de volta ao corpo da tabela
+            rows.forEach(row => tableBody.appendChild(row));
+        }
+
 
         reload_table();
     </script>
