@@ -357,7 +357,7 @@ app.put('/api/altlogin/:login', (req, res) => {
     const { login } = req.params;
     db.query(`INSERT INTO log_eventos(funcao, evento) VALUES ('server.js','Requisição para alterar dados do usuario do email ${login}')`);
     const { nome,email,senha,tipo_usuario } = req.body;
-    const sqlUpdate = `UPDATE usuarios SET nome = '${nome}', login = '${email}', senha = '${senha}', tipo_usuario = '${tipo_usuario}' tipo WHERE login = '${login}';`;
+    const sqlUpdate = `UPDATE usuarios SET nome = '${nome}', login = '${email}', senha = '${senha}', tipo_usuario = '${tipo_usuario}' WHERE login = '${login}';`;
     db.query(sqlUpdate, (err, result) => {
         if (err) {
             console.error('Erro no banco de dados:', err);
