@@ -852,6 +852,7 @@
                     <td style="background-color: ${obra.cor_pilar}; cursor: pointer;" onclick="mostrarCores(${index}, 'Pilar')">
                         <span style="font-weight: bold;color: black">${limitarTexto(obra.pilar, maxLength)}</span>
                         <select id="selectCorPilar${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_pilar',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Selecione uma cor</option>
                             <option value="#ffffff">Branco</option>
                             <option value="#ffff00">Amarelo</option>
                             <option value="#ff0000">Vermelho</option>
@@ -864,6 +865,7 @@
                     <td style="background-color: ${obra.cor_grade}; cursor: pointer;" onclick="mostrarCores(${index}, 'Grade')">
                         <span style="font-weight: bold;color: black;">${limitarTexto(obra.grade, maxLength)}</span>
                         <select id="selectCorGrade${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_grade',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Selecione uma cor</option>
                             <option value="#ffffff">Branco</option>
                             <option value="#ffff00">Amarelo</option>
                             <option value="#ff0000">Vermelho</option>
@@ -876,6 +878,7 @@
                     <td style="background-color: ${obra.cor_viga}; cursor: pointer;" onclick="mostrarCores(${index}, 'Viga')">
                         <span style="font-weight: bold;color: black">${limitarTexto(obra.viga, maxLength)}</span>
                         <select id="selectCorViga${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_viga',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Selecione uma cor</option>
                             <option value="#ffffff">Branco</option>
                             <option value="#ffff00">Amarelo</option>
                             <option value="#ff0000">Vermelho</option>
@@ -888,6 +891,7 @@
                     <td style="background-color: ${obra.cor_garfo}; cursor: pointer;" onclick="mostrarCores(${index}, 'Garfo')">
                         <span style="font-weight: bold;color: black">${limitarTexto(obra.garfo, maxLength)}</span>
                         <select id="selectCorGarfo${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_garfo',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Selecione uma cor</option>
                             <option value="#ffffff">Branco</option>
                             <option value="#ffff00">Amarelo</option>
                             <option value="#ff0000">Vermelho</option>
@@ -900,6 +904,7 @@
                     <td style="background-color: ${obra.cor_laje}; cursor: pointer;" onclick="mostrarCores(${index}, 'Laje')">
                         <span style="font-weight: bold;color: black">${limitarTexto(obra.laje, maxLength)}</span>
                         <select id="selectCorLaje${index}" style="display: none;" onchange="atualizarCor('${obra.nome_obra}','cor_laje',this.value);" onblur="this.style.display='none';">
+                            <option value="#ffffff">Selecione uma cor</option>
                             <option value="#ffffff">Branco</option>
                             <option value="#ffff00">Amarelo</option>
                             <option value="#ff0000">Vermelho</option>
@@ -1460,7 +1465,7 @@
 
         //atualiza a cor da coluna no bd e consequentemente na tela
         function atualizarCor(nome_obra,columnCor,corSelecionada) {
-            console.log('Iniciado atualizarCor()');  // Para depuração
+            console.log(`Iniciado atualizarCor() com cor ${corSelecionada}}`);  // Para depuração
             event.preventDefault();
             var att_cor = {
                 columnCor : columnCor,
@@ -1607,16 +1612,38 @@
         }
         //reordena a coluna pela ordem alfabética a tabela principal de controle
         function sortTableMainColumn(columnIndex) {
+            console.log('Reorganizando tabela principal')
             const tableBody = document.getElementById("tabelaObras");
             const rows = Array.from(tableBody.getElementsByTagName("tr"));
             const isAsc = tableBody.dataset.sortDirection === "asc";
+            // Define a ordem das cores
+            const colorOrder = [
+                "#ffffff", // Branco
+                "#ffff00", // Amarelo
+                "#00ff00", // Verde
+                "#0000ff", // Azul
+                "#ff0000"  // Vermelho
+            ];
             // Função para comparar as células
             const compare = (a, b) => {
-                const cellA = a.cells[columnIndex].innerText;
-                const cellB = b.cells[columnIndex].innerText;
-                return isAsc 
-                    ? cellA.localeCompare(cellB) // Ascendente
-                    : cellB.localeCompare(cellA); // Descendente
+                let cellA, cellB;
+                if (columnIndex == 6 || columnIndex == 7 || columnIndex == 8 || columnIndex == 9 || columnIndex == 10) 
+                {
+                    cellA = a.cells[columnIndex].style.backgroundColor;
+                    cellB = b.cells[columnIndex].style.backgroundColor;
+                    console.log(cellA)
+                    const indexA = colorOrder.indexOf(cellA);
+                    const indexB = colorOrder.indexOf(cellB);
+                    return isAsc ? indexA - indexB : indexB - indexA; // Ascendente ou Descendente
+                } 
+                else 
+                {
+                    cellA = a.cells[columnIndex].innerText;
+                    cellB = b.cells[columnIndex].innerText;
+                    return isAsc 
+                        ? cellA.localeCompare(cellB) // Ascendente
+                        : cellB.localeCompare(cellA); // Descendente
+                }
             };
             // Ordena as linhas
             rows.sort(compare);
@@ -1624,6 +1651,7 @@
             tableBody.dataset.sortDirection = isAsc ? "desc" : "asc";
             // Adiciona as linhas ordenadas de volta ao corpo da tabela
             rows.forEach(row => tableBody.appendChild(row));
+            console.log('Reorganização concluída')
         }
         //reordena a coluna pela ordem alfabética a tabela dos pavimentos
         function sortTablePavColumn(columnIndex) {
@@ -1645,7 +1673,6 @@
             // Adiciona as linhas ordenadas de volta ao corpo da tabela
             rows.forEach(row => tableBody.appendChild(row));
         }
-
 
         reload_table();
     </script>
