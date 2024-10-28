@@ -26,15 +26,15 @@ CREATE TABLE obras (
     data_concreto DATETIME DEFAULT NULL,
     pavimento_ativo CHAR(50) DEFAULT NULL,
     pilar CHAR(50) DEFAULT NULL,
-    cor_pilar CHAR(50) DEFAULT NULL,
+    cor_pilar CHAR(50) DEFAULT "#ffffff",
     grade CHAR(50) DEFAULT NULL,
-    cor_grade CHAR(50) DEFAULT NULL,
+    cor_grade CHAR(50) DEFAULT "#ffffff",
     viga CHAR(50) DEFAULT NULL,
-    cor_viga CHAR(50) DEFAULT NULL,
+    cor_viga CHAR(50) DEFAULT "#ffffff",
     garfo CHAR(50) DEFAULT NULL,
-    cor_garfo CHAR(50) DEFAULT NULL,
+    cor_garfo CHAR(50) DEFAULT "#ffffff",
     laje CHAR(50) DEFAULT NULL,
-    cor_laje CHAR(50) DEFAULT NULL,
+    cor_laje CHAR(50) DEFAULT "#ffffff",
     primeiro_contato_nome VARCHAR(100) DEFAULT NULL,
     primeiro_contato_tel VARCHAR(20) DEFAULT NULL,
     segundo_contato_nome VARCHAR(100) DEFAULT NULL,
@@ -79,7 +79,7 @@ create database teste;
 #visualizar databases:
 show databases;
 #selecionar database:
-use database teste;
+use teste;
 #criar tabela:
 create table coluna1(nome varchar(50), idade int primary key);
 #visualizar tabelas:
