@@ -185,9 +185,10 @@
             margin-left: 22em;
         }
         #div_table_main {
-            max-height: 250px; /* Ajuste a altura conforme necessário */
+            max-height: 260px; /* Ajuste a altura conforme necessário */
             overflow-y: auto;  /* Adiciona rolagem vertical */
             border: 1px solid #ddd; /* Borda opcional */
+            margin-bottom: 1em;
         }
         /* Estilos específicos para mobiles */
         @media (max-width: 1024px) {
@@ -272,6 +273,9 @@
                     margin-left: 1em;
                     margin-top: 1em;
                     border-radius: 10px;
+                }
+                #div_table_main {
+                    max-height: 350px; /* Ajuste a altura conforme necessário */
                 }
             }
 
@@ -373,7 +377,9 @@
                 .table.table-striped.pavimentos {
                     font-size: 11px;
                 }
-
+                #div_table_main {
+                    max-height: 200px; /* Ajuste a altura conforme necessário */
+                }
             }
             .table.table-striped {
                 font-size: 15px;
@@ -424,7 +430,11 @@
             .modal.imagem_expandida {
                 width: 1300px; 
             }
-
+        }
+        @media (min-width: 1400px) {
+            #div_table_main {
+                max-height: 400px; /* Ajuste a altura conforme necessário */
+            }
         }
 
     </style>
