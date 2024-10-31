@@ -810,8 +810,8 @@
         const urlServ = 'http://82.197.65.112:3000'
         const usuario = localStorage.getItem('usuario');
         const tipo_usuario = localStorage.getItem('tipo_usuario');
-        console.log(usuario)
-        console.log(tipo_usuario)
+        console.log(`Nome usuario: ${usuario}`)
+        console.log(`Tipo de usuario: ${tipo_usuario}`)
         // get no servidor node com os dados do select * from obras
         function reload_table() {
             const maxLength = 10; // Defina o número máximo de caracteres que deseja exibir
@@ -928,6 +928,7 @@
                     </td>
                 `;
                 //caso seja usuario de baixo nivel de acesso ele só consegue visualizar e adicionar galeria
+                console.log(`não é adm: ${tipo_usuario != "administrador"}`)
                 if (tipo_usuario != "administrador") {
                     // Selecionar todos os botões dentro da nova linha
                     const buttons = row.querySelectorAll('button');
@@ -941,12 +942,18 @@
                     for (let i = 0; i < cells.length - 1; i++) {
                         cells[i].style.pointerEvents = 'none'; // Desabilita eventos de clique
                     };
+                    document.getElementById('btnModalObra').disabled = true;
+                    document.getElementById('btnModalUsuarios').disabled = true;
+                    document.getElementById('btnGeraPlanilha').disabled = true;
+                    document.getElementById('apenas_obras_ativas').disabled = true;
+                    var btnsEditObra = document.getElementsByName("btnEditObra");
+                    var btnsPavimentosGerais = document.getElementsByName("btnPavimentosGerais");
+                    var btnsAddPavimentos = document.getElementsByName("btnAddPavimentos");
                 }
                 tabelaObras.appendChild(row); // Adiciona a linha à tabela
             })})
             .catch(error => console.error('Erro:', error));
             console.log(`Finalizado reload_table()`);
-            gerencia_acesso()
         }
 
         //organiza pela coluna nas obras gerais
@@ -1596,20 +1603,6 @@
             console.log(`Finalizado gera_planilha()`);
         }
 
-        //gerencia acesso do usuario
-        function gerencia_acesso() {
-            console.log('iniciando o gerenciador de acesso')
-            if (tipo_usuario == "usuario") {
-                document.getElementById('btnModalObra').disabled = true;
-                document.getElementById('btnModalUsuarios').disabled = true;
-                document.getElementById('btnGeraPlanilha').disabled = true;
-                document.getElementById('apenas_obras_ativas').disabled = true;
-                var btnsEditObra = document.getElementsByName("btnEditObra");
-                var btnsPavimentosGerais = document.getElementsByName("btnPavimentosGerais");
-                var btnsAddPavimentos = document.getElementsByName("btnAddPavimentos");
-            }
-            console.log('finalizado o gerenciador de acesso')
-        }
         //reordena a coluna pela ordem alfabética a tabela principal de controle
         function sortTableMainColumn(columnIndex) {
             console.log('Reorganizando tabela principal')
@@ -1624,20 +1617,36 @@
                 "#0000ff", // Azul
                 "#ff0000"  // Vermelho
             ];
+            // Função para converter RGB para HEX
+            function rgbToHex(rgb) {
+                const rgbValues = rgb.match(/\d+/g); // Extrai valores numéricos
+                if (!rgbValues) return null; // Se não for um valor RGB válido
+                
+                const hex = rgbValues.map(value => {
+                    const hexValue = parseInt(value).toString(16).padStart(2, '0');
+                    return hexValue;
+                }).join('');
+                
+                return `#${hex}`;
+            }
             // Função para comparar as células
             const compare = (a, b) => {
                 let cellA, cellB;
-                if (columnIndex == 6 || columnIndex == 7 || columnIndex == 8 || columnIndex == 9 || columnIndex == 10) 
-                {
+                if ([6, 7, 8, 9, 10].includes(columnIndex)) {
                     cellA = a.cells[columnIndex].style.backgroundColor;
                     cellB = b.cells[columnIndex].style.backgroundColor;
-                    console.log(cellA)
+                    // Converte cores RGB para HEX se necessário
+                    cellA = rgbToHex(cellA);
+                    cellB = rgbToHex(cellB);
+                    console.log(`Comparando cores: ${cellA} e ${cellB}`);
                     const indexA = colorOrder.indexOf(cellA);
                     const indexB = colorOrder.indexOf(cellB);
+                    // Se a cor não estiver definida, colocar um valor que não afete a ordenação
+                    if (indexA === -1) return 1; // Se não encontrado, considerá-lo depois
+                    if (indexB === -1) return -1; // Se não encontrado, considerá-lo depois
+                    
                     return isAsc ? indexA - indexB : indexB - indexA; // Ascendente ou Descendente
-                } 
-                else 
-                {
+                } else {
                     cellA = a.cells[columnIndex].innerText;
                     cellB = b.cells[columnIndex].innerText;
                     return isAsc 
@@ -1645,7 +1654,8 @@
                         : cellB.localeCompare(cellA); // Descendente
                 }
             };
-            // Ordena as linhas
+                    // Ordena as linhas
+            console.log(rows)
             rows.sort(compare);
             // Atualiza a direção da ordenação
             tableBody.dataset.sortDirection = isAsc ? "desc" : "asc";
@@ -1653,6 +1663,7 @@
             rows.forEach(row => tableBody.appendChild(row));
             console.log('Reorganização concluída')
         }
+
         //reordena a coluna pela ordem alfabética a tabela dos pavimentos
         function sortTablePavColumn(columnIndex) {
             const tableBody = document.getElementById("tabelaPavimentosGerais");
